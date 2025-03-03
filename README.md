@@ -1,69 +1,82 @@
-# :package_description
+# GoogleTranslateToolkit
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/gabrielesbaiz/google-translate-toolkit.svg?style=flat-square)](https://packagist.org/packages/gabrielesbaiz/google-translate-toolkit)
+[![Total Downloads](https://img.shields.io/packagist/dt/gabrielesbaiz/google-translate-toolkit.svg?style=flat-square)](https://packagist.org/packages/gabrielesbaiz/google-translate-toolkit)
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+A lightweight helper package to handle translations using Google Translate API.
 
-## Support us
+Original code from [JoggApp/laravel-google-translate](https://github.com/JoggApp/laravel-google-translate)
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
+## Features
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+- ✅ Basic translation
+- ✅ Advanced translation
+- ✅ Detect language
+- ✅ Batch detect language
+- ✅ Batch detect language
+- ✅ Batch translation
+- ✅ Get available translations for a given text
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
-```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
-php artisan migrate
+composer require gabrielesbaiz/google-translate-toolkit
 ```
 
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-config"
+php artisan vendor:publish --tag="google-translate-toolkit-config"
 ```
 
 This is the contents of the published config file:
 
 ```php
 return [
+    /*
+     * The ISO 639-1 code of the default source language.
+     */
+    'default_source_translation' => 'en',
+
+    /*
+     * The ISO 639-1 code of the language in lowercase to which
+     * the text will be translated to by default.
+     */
+    'default_target_translation' => 'en',
+
+    /*
+     * Api Key generated within Google Cloud Dashboard.
+     */
+    'api_key' => env('GOOGLE_TRANSLATE_API_KEY'),
 ];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
 ```
 
 ## Usage
 
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+$googleTranslateToolkit = new Gabrielesbaiz\GoogleTranslateToolkit();
+
+echo $googleTranslateToolkit->translate('Hello world');
 ```
+
+Using facade:
+
+```php
+use GoogleTranslateToolkit;
+
+GoogleTranslateToolkit::translate('Hello world');
+```
+
+## Available Methods
+- `GoogleTranslateToolkit::detectLanguage(string $text): array` - Detect the language.
+- `GoogleTranslateToolkit::detectLanguage(array $texts): array` - Detect the language.
+- `GoogleTranslateToolkit::translate(string $text): array` - Translate the given text.
+- `GoogleTranslateToolkit::translate(array $texts): array` - Translate the given text.
+- `GoogleTranslateToolkit::justTranslate(string $text)): string` - Translate the given text.
+- `GoogleTranslateToolkit::getAvailableTranslationsFor('en'): array` - Get all the available translations from 'Google Translation' for a particular language by passing its language code.
+- `GoogleTranslateToolkit::unlessLanguageIs('en', string $text): array` - Translate unless the language is same as the first argument. It accepts an optional third argument which is the language code you want the string to be translated in. You can specify the default option in the config file. If the languages are same, the input string is returned as it is, else an array is returned containing the translation results.
 
 ## Testing
 
@@ -85,7 +98,8 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [Jogg](https://github.com/Jogg)
+- [Gabriele Sbaiz](https://github.com/gabrielesbaiz)
 - [All Contributors](../../contributors)
 
 ## License
