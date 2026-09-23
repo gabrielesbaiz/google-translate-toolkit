@@ -1,37 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gabrielesbaiz\GoogleTranslateToolkit\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Gabrielesbaiz\GoogleTranslateToolkit\GoogleTranslateToolkitServiceProvider;
+use Illuminate\Support\Facades\Http;
+use Orchestra\Testbench\TestCase as Orchestra;
 
-class TestCase extends Orchestra
+abstract class TestCase extends Orchestra
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Gabrielesbaiz\\GoogleTranslateToolkit\\Database\\Factories\\'.class_basename($modelName).'Factory'
-        );
-    }
-
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             GoogleTranslateToolkitServiceProvider::class,
         ];
     }
 
-    public function getEnvironmentSetUp($app)
+    protected function setUp(): void
     {
-        config()->set('database.default', 'testing');
+        parent::setUp();
 
-        /*
-         foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__ . '/database/migrations') as $migration) {
-            (include $migration->getRealPath())->up();
-         }
-         */
+        // No test may ever reach the real API.
+        Http::preventStrayRequests();
+    }
+
+    protected function defineEnvironment($app): void
+    {
+        $app['config']->set('app.locale', 'en');
+        $app['config']->set('cache.default', 'array');
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+
+        $app['config']->set('google-translate-toolkit.api_key', 'test-key');
+        $app['config']->set('google-translate-toolkit.default_source', null);
+        $app['config']->set('google-translate-toolkit.default_target', 'it');
+        $app['config']->set('google-translate-toolkit.cache.enabled', false);
+        $app['config']->set('google-translate-toolkit.http.retry.times', 1);
     }
 }

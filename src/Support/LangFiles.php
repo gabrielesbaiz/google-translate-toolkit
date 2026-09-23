@@ -1,0 +1,116 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Gabrielesbaiz\GoogleTranslateToolkit\Support;
+
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
+
+/**
+ * Reading and writing lang/{locale}/*.php and lang/{locale}.json.
+ */
+final class LangFiles
+{
+    public function __construct(private readonly string $basePath) {}
+
+    public static function make(?string $basePath = null): self
+    {
+        return new self($basePath ?? (function_exists('lang_path') ? lang_path() : base_path('lang')));
+    }
+
+    public function path(string ...$parts): string
+    {
+        return rtrim($this->basePath, '/').'/'.implode('/', $parts);
+    }
+
+    public function exists(string $locale): bool
+    {
+        return File::isDirectory($this->path($locale)) || File::exists($this->path($locale.'.json'));
+    }
+
+    /**
+     * Every group ("auth", "validation", "__json") mapped to its flattened lines.
+     *
+     * @return Collection<string, array<string, string>>
+     */
+    public function read(string $locale): Collection
+    {
+        $groups = collect();
+
+        foreach (File::glob($this->path($locale, '*.php')) ?: [] as $file) {
+            $lines = include $file;
+
+            if (is_array($lines)) {
+                $groups[pathinfo($file, PATHINFO_FILENAME)] = $this->flatten($lines);
+            }
+        }
+
+        $json = $this->path($locale.'.json');
+
+        if (File::exists($json)) {
+            $decoded = json_decode(File::get($json), true);
+
+            if (is_array($decoded)) {
+                $groups['__json'] = array_map(strval(...), $decoded);
+            }
+        }
+
+        return $groups;
+    }
+
+    /** @param array<string, string> $lines */
+    public function write(string $locale, string $group, array $lines): string
+    {
+        if ($group === '__json') {
+            $path = $this->path($locale.'.json');
+
+            File::ensureDirectoryExists(dirname($path));
+            File::put($path, (string) json_encode($lines, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).PHP_EOL);
+
+            return $path;
+        }
+
+        $path = $this->path($locale, $group.'.php');
+
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, "<?php\n\ndeclare(strict_types=1);\n\nreturn ".$this->export(Arr::undot($lines)).";\n");
+
+        return $path;
+    }
+
+    /**
+     * @param  array<string, mixed>  $lines
+     * @return array<string, string>
+     */
+    private function flatten(array $lines): array
+    {
+        return collect(Arr::dot($lines))
+            ->filter(fn (mixed $value) => is_string($value))
+            ->map(fn (mixed $value): string => (string) $value)
+            ->all();
+    }
+
+    /** @param array<array-key, mixed> $value */
+    private function export(array $value, int $depth = 1): string
+    {
+        $indent = str_repeat('    ', $depth);
+        $lines = ['['];
+
+        foreach ($value as $key => $item) {
+            $lines[] = sprintf(
+                '%s%s => %s,',
+                $indent,
+                is_int($key) ? $key : "'".str_replace("'", "\\'", (string) $key)."'",
+                is_array($item)
+                    ? $this->export($item, $depth + 1)
+                    : "'".str_replace(['\\', "'"], ['\\\\', "\\'"], (string) $item)."'",
+            );
+        }
+
+        $lines[] = str_repeat('    ', $depth - 1).']';
+
+        return implode("\n", $lines);
+    }
+}
