@@ -9,10 +9,23 @@ use Illuminate\Console\Command;
 
 class TranslateStatsCommand extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'translate:stats {--days=7 : How many days to report}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Show translation volume, cache hit rate and estimated spend';
 
+    /**
+     * Execute the console command.
+     */
     public function handle(GoogleTranslateToolkit $toolkit): int
     {
         $stats = $toolkit->stats(max(1, (int) $this->option('days')));

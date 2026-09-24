@@ -11,7 +11,11 @@ use Illuminate\Support\Collection;
  */
 final class TranslationCollection extends Collection
 {
-    /** @return Collection<array-key, string> */
+    /**
+     * Get the translated text of every translation in the collection.
+     *
+     * @return Collection<array-key, string>
+     */
     public function texts(): Collection
     {
         return new Collection(array_map(
@@ -21,7 +25,7 @@ final class TranslationCollection extends Collection
     }
 
     /**
-     * Source text => translated text.
+     * Get the collection keyed by source text and valued by translated text.
      *
      * @return Collection<string, string>
      */
@@ -36,12 +40,19 @@ final class TranslationCollection extends Collection
         return new Collection($dictionary);
     }
 
-    /** @return array<int, string> */
+    /**
+     * Get the translated text of every translation as a list.
+     *
+     * @return array<int, string>
+     */
     public function toStrings(): array
     {
         return array_values($this->texts()->all());
     }
 
+    /**
+     * Get the translated text of every translation, one per line.
+     */
     public function __toString(): string
     {
         return implode(PHP_EOL, $this->toStrings());

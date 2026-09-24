@@ -6,6 +6,9 @@ namespace Gabrielesbaiz\GoogleTranslateToolkit\Exceptions;
 
 class UnsupportedLanguageException extends GoogleTranslateException
 {
+    /**
+     * Create a new exception for the given language code.
+     */
     public static function make(string $code): self
     {
         return new self(sprintf(

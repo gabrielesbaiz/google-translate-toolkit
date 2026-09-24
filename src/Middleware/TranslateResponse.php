@@ -13,17 +13,25 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Opt-in: translates configured JSON fields to the language negotiated from
- * Accept-Language. Every uncached field costs money - enable deliberately.
+ * Translates the configured JSON response fields into the language negotiated
+ * from the Accept-Language header. Every uncached field costs money, so the
+ * middleware stays disabled until it is enabled in the configuration.
  */
 class TranslateResponse
 {
+    /**
+     * Create a new middleware instance.
+     */
     public function __construct(
         private readonly GoogleTranslateToolkit $toolkit,
         private readonly Config $config,
     ) {}
 
-    /** @param Closure(Request): Response $next */
+    /**
+     * Handle an incoming request.
+     *
+     * @param  Closure(Request): Response  $next
+     */
     public function handle(Request $request, Closure $next, ?string ...$fields): Response
     {
         $response = $next($request);
@@ -53,6 +61,9 @@ class TranslateResponse
         return $response->setData($this->toolkit->to($target)->onFailUseSource()->json($data, $only));
     }
 
+    /**
+     * Resolve the target language from the request, if it differs from the application locale.
+     */
     private function negotiate(Request $request): ?string
     {
         $locales = $this->config->middlewareLocales() ?: Language::codes();

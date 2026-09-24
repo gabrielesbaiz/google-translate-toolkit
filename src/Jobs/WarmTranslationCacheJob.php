@@ -21,6 +21,8 @@ class WarmTranslationCacheJob implements ShouldQueue
     use SerializesModels;
 
     /**
+     * Create a new job instance.
+     *
      * @param  array<int, string>  $texts
      * @param  array<int, string>  $targets
      */
@@ -30,6 +32,9 @@ class WarmTranslationCacheJob implements ShouldQueue
         public readonly ?string $source = null,
     ) {}
 
+    /**
+     * Execute the job.
+     */
     public function handle(GoogleTranslateToolkit $toolkit): void
     {
         $toolkit->from($this->source)->to($this->targets)->many($this->texts);

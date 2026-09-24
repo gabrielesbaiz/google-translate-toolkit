@@ -11,6 +11,11 @@ use Illuminate\Console\Command;
 
 class TranslateLangCommand extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'translate:lang
         {--from=en : Source locale directory}
         {--to=* : Target locales}
@@ -18,8 +23,16 @@ class TranslateLangCommand extends Command
         {--force : Overwrite lines that already exist in the target}
         {--dry-run : Report what would be translated and what it would cost}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Translate lang files into other locales, skipping lines that already exist';
 
+    /**
+     * Execute the console command.
+     */
     public function handle(GoogleTranslateToolkit $toolkit): int
     {
         $lang = LangFiles::make();

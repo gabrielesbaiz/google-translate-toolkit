@@ -55,7 +55,7 @@ it('does not retry a client error', function () {
     try {
         GoogleTranslateToolkit::justTranslate('hi');
     } catch (TranslationFailedException) {
-        // expected
+        // The exception is expected here. Only the request count matters.
     }
 
     Http::assertSentCount(1);

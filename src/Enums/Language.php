@@ -151,7 +151,7 @@ enum Language: string
     case Zulu = 'zu';
 
     /**
-     * Normalize a loosely typed code: "EN_us" and "en-US" both become "en-US".
+     * Normalize a loosely typed language code to its canonical form.
      */
     public static function normalize(self|string $code): string
     {
@@ -172,6 +172,9 @@ enum Language: string
         return $language.'-'.(mb_strlen($region) === 2 ? mb_strtoupper($region) : ucfirst(mb_strtolower($region)));
     }
 
+    /**
+     * Get the language matching the given code, or null when it is unknown.
+     */
     public static function tryFromCode(self|string|null $code): ?self
     {
         if ($code instanceof self) {
@@ -189,23 +192,37 @@ enum Language: string
             ?? self::tryFrom(explode('-', $normalized)[0]);
     }
 
+    /**
+     * Get the language matching the given code.
+     */
     public static function fromCode(self|string $code): self
     {
         return self::tryFromCode($code) ?? throw UnsupportedLanguageException::make((string) (is_string($code) ? $code : $code->value));
     }
 
-    /** @return array<int, string> */
+    /**
+     * Get every supported language code.
+     *
+     * @return array<int, string>
+     */
     public static function codes(): array
     {
         return array_column(self::cases(), 'value');
     }
 
-    /** @return Collection<string, string> */
+    /**
+     * Get every supported language keyed by code and valued by label.
+     *
+     * @return Collection<string, string>
+     */
     public static function options(): Collection
     {
         return collect(self::cases())->mapWithKeys(fn (self $language) => [$language->value => $language->label()]);
     }
 
+    /**
+     * Get the human readable name of the language.
+     */
     public function label(): string
     {
         return match ($this) {
@@ -220,6 +237,9 @@ enum Language: string
         };
     }
 
+    /**
+     * Determine if the language is written right to left.
+     */
     public function isRtl(): bool
     {
         return in_array($this, [

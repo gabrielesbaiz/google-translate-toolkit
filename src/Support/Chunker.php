@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace Gabrielesbaiz\GoogleTranslateToolkit\Support;
 
 /**
- * The v2 endpoint accepts a limited number of segments and bytes per call.
+ * Splits a batch of segments into requests the v2 endpoint will accept.
  */
 final class Chunker
 {
+    /**
+     * Create a new chunker instance.
+     */
     public function __construct(private readonly Config $config) {}
 
     /**
-     * Split preserving the original keys, honouring both the segment and the character budget.
+     * Split the given segments into chunks, preserving their original keys.
      *
      * @param  array<int, string>  $texts
      * @return array<int, array<int, string>>

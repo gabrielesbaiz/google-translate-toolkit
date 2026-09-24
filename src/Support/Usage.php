@@ -11,11 +11,13 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 /**
- * Character accounting: what a call will cost before it leaves, and what has
- * been spent since.
+ * Prices a call before it leaves the application and records what it spent.
  */
 final class Usage
 {
+    /**
+     * Create a new usage instance.
+     */
     public function __construct(
         private readonly Config $config,
         private readonly CacheFactory $cache,
@@ -23,6 +25,8 @@ final class Usage
     ) {}
 
     /**
+     * Estimate what translating the given segments would cost.
+     *
      * @param  iterable<int, string>|string  $texts
      * @param  array<int, string>  $targets
      */
@@ -48,7 +52,7 @@ final class Usage
     }
 
     /**
-     * Refuse to spend beyond the configured daily ceiling.
+     * Guard the configured daily budget before spending any more characters.
      */
     public function guardBudget(int $characters): void
     {
@@ -65,6 +69,9 @@ final class Usage
         }
     }
 
+    /**
+     * Record what a call spent against today's usage.
+     */
     public function record(int $characters, int $calls = 0, int $cacheHits = 0, int $failures = 0): void
     {
         if (! $this->config->statsEnabled()) {
@@ -84,13 +91,21 @@ final class Usage
         ], $this->config->statsRetentionDays() * 86400);
     }
 
-    /** @return array<string, int> */
+    /**
+     * Get the usage recorded so far today.
+     *
+     * @return array<string, int>
+     */
     public function today(): array
     {
         return $this->forDate(Carbon::now()->toDateString());
     }
 
-    /** @return array<string, int> */
+    /**
+     * Get the usage recorded on the given date.
+     *
+     * @return array<string, int>
+     */
     public function forDate(string $date): array
     {
         $stats = (array) $this->cache->store($this->config->cacheStore())->get($this->key($date), []);
@@ -104,6 +119,8 @@ final class Usage
     }
 
     /**
+     * Get the usage recorded over the last given number of days.
+     *
      * @return Collection<string, array<string, int|float>>
      */
     public function forDays(int $days = 7): Collection
@@ -117,6 +134,8 @@ final class Usage
     }
 
     /**
+     * Summarize a day of usage with its hit rate and cost.
+     *
      * @param  array<string, int>  $stats
      * @return array<string, float|int>
      */
@@ -131,6 +150,9 @@ final class Usage
         ];
     }
 
+    /**
+     * Flush every day of usage still within the retention window.
+     */
     public function flush(): void
     {
         $store = $this->cache->store($this->config->cacheStore());
@@ -140,6 +162,9 @@ final class Usage
         }
     }
 
+    /**
+     * Get the cache key holding the usage for the given date.
+     */
     private function key(string $date): string
     {
         return $this->config->cachePrefix().':stats:'.$date;

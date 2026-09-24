@@ -9,13 +9,16 @@ use Illuminate\Cache\RateLimiter;
 
 final class Throttle
 {
+    /**
+     * Create a new throttle instance.
+     */
     public function __construct(
         private readonly Config $config,
         private readonly RateLimiter $limiter,
     ) {}
 
     /**
-     * Reserve one slot per outgoing API request.
+     * Reserve a slot in the rate limiter for each outgoing request.
      */
     public function hit(int $requests = 1): void
     {
@@ -35,6 +38,9 @@ final class Throttle
         }
     }
 
+    /**
+     * Clear the rate limiter.
+     */
     public function clear(): void
     {
         $this->limiter->clear($this->config->rateLimitKey());

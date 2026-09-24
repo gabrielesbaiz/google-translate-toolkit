@@ -46,6 +46,9 @@ use Illuminate\Support\Facades\Facade;
  */
 class GoogleTranslateToolkit extends Facade
 {
+    /**
+     * Get the registered name of the component.
+     */
     protected static function getFacadeAccessor(): string
     {
         return \Gabrielesbaiz\GoogleTranslateToolkit\GoogleTranslateToolkit::class;

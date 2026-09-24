@@ -9,8 +9,9 @@ return [
     | Credentials
     |--------------------------------------------------------------------------
     |
-    | API key generated within the Google Cloud console with the
-    | "Cloud Translation API" enabled.
+    | Here you may specify the API key generated within the Google Cloud
+    | console for a project that has the "Cloud Translation API" enabled.
+    | The base URL is only ever changed to point at a proxy or a mock.
     |
     */
 
@@ -20,12 +21,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Defaults
+    | Default Languages
     |--------------------------------------------------------------------------
     |
-    | "default_source" may be null: Google will then auto-detect the source
-    | language, which is both cheaper and more accurate than guessing.
-    | "default_target" falls back to the application locale when null.
+    | These options control the languages used when a call does not name them.
+    | A null source lets Google detect the language, which is cheaper and more
+    | accurate than guessing, while a null target falls back to your locale.
     |
     */
 
@@ -36,16 +37,27 @@ return [
     'default_format' => env('GOOGLE_TRANSLATE_FORMAT', 'text'),
 
     /*
-    | Reject language codes that are not part of the known ISO 639-1 set.
-    | Disable it to pass through any code Google may support in the future.
+    |--------------------------------------------------------------------------
+    | Strict Language Codes
+    |--------------------------------------------------------------------------
+    |
+    | This option determines whether language codes outside the known ISO
+    | 639-1 set are rejected. You may disable it to pass through any code
+    | that Google happens to support before this package knows about it.
+    |
     */
 
     'strict_languages' => true,
 
     /*
     |--------------------------------------------------------------------------
-    | HTTP
+    | HTTP Client
     |--------------------------------------------------------------------------
+    |
+    | These options are handed to Laravel's HTTP client on every outgoing
+    | request. Failed requests are retried with an exponential backoff,
+    | and chunks of a large batch are sent concurrently through a pool.
+    |
     */
 
     'http' => [
@@ -56,7 +68,6 @@ return [
             'sleep' => 250,
             'backoff' => true,
         ],
-        // Send several chunks concurrently through Http::pool().
         'concurrency' => 5,
     ],
 
@@ -66,7 +77,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | The v2 endpoint accepts at most 128 segments and roughly 200k bytes per
-    | request. Batches larger than this are split transparently.
+    | request. These options keep each request comfortably inside those
+    | limits, and any batch larger than this is split transparently.
     |
     */
 
@@ -81,7 +93,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | Translations are deterministic enough to cache. Cached segments never
-    | reach the API, which is the single biggest cost saver of this package.
+    | reach the API, which is the single biggest cost saver in this package,
+    | so you may want to give them a generous time to live.
     |
     */
 
@@ -94,10 +107,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Rate limiting
+    | Rate Limiting
     |--------------------------------------------------------------------------
     |
-    | Guards the quota with Laravel's RateLimiter before hitting the API.
+    | These options guard your Google quota with Laravel's rate limiter before
+    | a request ever leaves the application. Once the limit is reached, a
+    | RateLimitExceededException is thrown instead of a request being sent.
     |
     */
 
@@ -112,9 +127,9 @@ return [
     | Resilience
     |--------------------------------------------------------------------------
     |
-    | When "fallback_to_source" is true a failing API call returns the original
-    | text instead of throwing. Useful in queued jobs and webhooks where a
-    | missing translation must never fail the whole pipeline.
+    | When this option is enabled, a failing API call returns the original
+    | text instead of throwing. This is useful in queued jobs and webhooks
+    | where a missing translation must never fail the whole pipeline.
     |
     */
 
@@ -126,6 +141,11 @@ return [
     |--------------------------------------------------------------------------
     | Queue
     |--------------------------------------------------------------------------
+    |
+    | These options determine the connection and queue used by the jobs this
+    | package dispatches. When they are left null, the jobs are dispatched
+    | onto the default connection and queue of your application.
+    |
     */
 
     'queue' => [
@@ -135,11 +155,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Eloquent
+    | Eloquent Attributes
     |--------------------------------------------------------------------------
     |
-    | Suffix used by the HasTranslations concern: "body" translated to "it"
-    | is written to "body_it".
+    | This option controls the suffix used by the HasTranslations concern to
+    | name the column a translation is written to. With the value below, a
+    | "body" attribute translated into Italian is stored in "body_it".
     |
     */
 
@@ -147,12 +168,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Placeholder protection
+    | Placeholder Protection
     |--------------------------------------------------------------------------
     |
     | Tokens matching these patterns are masked before the text reaches Google
-    | and restored afterwards, so ":name", "{count}" or URLs survive intact.
-    | Your own patterns are merged with the built-in ones.
+    | and restored once it comes back, so ":name", "{count}" and URLs survive
+    | the round trip intact. Your own patterns are merged with the built-in ones.
     |
     */
 
@@ -166,9 +187,9 @@ return [
     | Glossary
     |--------------------------------------------------------------------------
     |
-    | "protect" lists terms that must never be translated (brand names).
-    | "overrides" forces domain wording per target locale and is applied after
-    | the translation comes back.
+    | The protected terms listed here are never translated, which is where
+    | brand names belong. The overrides force your own domain wording per
+    | target locale and are applied after the translation comes back.
     |
     */
 
@@ -181,11 +202,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Pricing & budget
+    | Pricing & Budget
     |--------------------------------------------------------------------------
     |
-    | Google bills per million characters. "max_characters_per_day" throws a
-    | BudgetExceededException before the request leaves your application.
+    | Google bills per million characters, so these options let the package
+    | price a call before you make it. Once the daily character budget is
+    | reached, a BudgetExceededException is thrown instead of a request.
     |
     */
 
@@ -200,8 +222,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Usage statistics
+    | Usage Statistics
     |--------------------------------------------------------------------------
+    |
+    | These options control the daily counters behind the "translate:stats"
+    | command, which report your translation volume, cache hit rate and
+    | estimated spend. The counters are kept in your cache store.
+    |
     */
 
     'stats' => [
@@ -211,12 +238,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Response middleware
+    | Response Middleware
     |--------------------------------------------------------------------------
     |
-    | Opt-in: translates the listed JSON response paths to the language
-    | negotiated from the Accept-Language header. Dot notation and wildcards
-    | are supported. This can get expensive - enable it deliberately.
+    | The "translate.response" middleware translates the JSON response paths
+    | listed here into the language negotiated from the Accept-Language
+    | header. Dot notation and wildcards are supported, and this can get
+    | expensive, so the middleware stays disabled until you enable it.
     |
     */
 

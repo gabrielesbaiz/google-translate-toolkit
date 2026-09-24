@@ -11,7 +11,11 @@ class TranslationCompleted
 {
     use Dispatchable;
 
-    /** @param array<int, Translation> $translations */
+    /**
+     * Create a new event instance.
+     *
+     * @param  array<int, Translation>  $translations
+     */
     public function __construct(
         public readonly array $translations,
         public readonly string $target,

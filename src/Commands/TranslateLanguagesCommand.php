@@ -10,13 +10,26 @@ use Illuminate\Support\Str;
 
 class TranslateLanguagesCommand extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'translate:languages
         {--target= : Display the language names in this language}
         {--search= : Filter by code or name}
         {--offline : Use the list bundled with the package instead of calling the API}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'List the languages supported by Google Translate';
 
+    /**
+     * Execute the console command.
+     */
     public function handle(GoogleTranslateToolkit $toolkit): int
     {
         $languages = $this->option('offline')

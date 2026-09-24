@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 if (! function_exists('google_translate')) {
     /**
-     * Translate text, or grab the toolkit itself when called without arguments.
+     * Translate the given text, or get the toolkit itself when called without arguments.
      *
      * @param  string|iterable<array-key, string>|null  $text
      * @param  Language|string|iterable<int, Language|string>|null  $to

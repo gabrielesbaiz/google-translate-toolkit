@@ -12,6 +12,11 @@ use Illuminate\Support\Str;
 
 class TranslateAuditCommand extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'translate:audit
         {--from=en : Source locale}
         {--to= : Locale to audit}
@@ -19,8 +24,16 @@ class TranslateAuditCommand extends Command
         {--threshold=0.6 : Flag lines scoring below this}
         {--limit=100 : Maximum lines to audit}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Back-translate existing lang lines and flag the suspicious ones (costs 2 calls per line)';
 
+    /**
+     * Execute the console command.
+     */
     public function handle(GoogleTranslateToolkit $toolkit): int
     {
         $lang = LangFiles::make();

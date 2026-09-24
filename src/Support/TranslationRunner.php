@@ -18,10 +18,13 @@ use Illuminate\Support\Collection;
 use Throwable;
 
 /**
- * Where a translation actually happens: masking, cache, budget, driver, restore.
+ * Runs a translation end to end: masking, cache, budget, driver and restore.
  */
 final class TranslationRunner
 {
+    /**
+     * Create a new translation runner instance.
+     */
     public function __construct(
         private readonly Container $container,
         private readonly Config $config,
@@ -32,12 +35,17 @@ final class TranslationRunner
         private readonly Dispatcher $events,
     ) {}
 
+    /**
+     * Resolve the translator driver.
+     */
     public function translator(): Translator
     {
         return $this->container->make(Translator::class);
     }
 
     /**
+     * Translate the given texts for every configured target language.
+     *
      * @param  array<array-key, string>  $texts
      * @return array<string, array<array-key, Translation>>
      */
@@ -89,6 +97,8 @@ final class TranslationRunner
     }
 
     /**
+     * Detect the language of the given texts.
+     *
      * @param  array<array-key, string>  $texts
      * @return array<array-key, DetectedLanguage>
      */
@@ -121,6 +131,8 @@ final class TranslationRunner
     }
 
     /**
+     * Get the languages the driver can translate, named in the given display language.
+     *
      * @return Collection<string, string>
      */
     public function languages(?string $displayLanguage = null): Collection
@@ -137,7 +149,7 @@ final class TranslationRunner
     }
 
     /**
-     * Which segments of this batch are not cached yet.
+     * Get the segments of the given batch that are not cached yet.
      *
      * @param  array<array-key, string>  $texts
      * @return array<array-key, string>
@@ -147,12 +159,17 @@ final class TranslationRunner
         return $this->cache->partition($texts, $this->code($source), (string) $this->code($target), $format)['misses'];
     }
 
+    /**
+     * Normalize the given language code.
+     */
     public function normalizeCode(?string $code): ?string
     {
         return $this->code($code);
     }
 
     /**
+     * Mask the tokens the driver must not translate.
+     *
      * @param  array<array-key, string>  $texts
      * @return array<array-key, MaskedText>
      */
@@ -172,7 +189,9 @@ final class TranslationRunner
     }
 
     /**
-     * Targets sharing the same set of cache misses travel in one pooled request set.
+     * Group the targets that share the same set of cache misses.
+     *
+     * Grouped targets travel in a single pooled set of requests.
      *
      * @param  array<string, array{hits: array<array-key, string>, misses: array<array-key, string>}>  $plans
      * @return array<int, array{targets: array<int, string>, misses: array<array-key, string>}>
@@ -192,6 +211,8 @@ final class TranslationRunner
     }
 
     /**
+     * Send the uncached segments to the driver.
+     *
      * @param  array<array-key, string>  $misses
      * @param  array<array-key, MaskedText>  $masked
      * @param  array<int, string>  $targets
@@ -221,6 +242,8 @@ final class TranslationRunner
     }
 
     /**
+     * Recover from a failed request, or rethrow when there is no fallback.
+     *
      * @param  array<array-key, string>  $payload
      * @param  array<array-key, string>  $misses
      * @param  array<int, string>  $targets
@@ -242,7 +265,7 @@ final class TranslationRunner
                 : new GoogleTranslateException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
 
-        // Degrade gracefully: hand back the untouched source text.
+        // Here we will hand back the untouched source text so the caller can continue.
         $results = [];
 
         foreach ($targets as $target) {
@@ -255,6 +278,8 @@ final class TranslationRunner
     }
 
     /**
+     * Build the translations for a target from its cache hits and driver results.
+     *
      * @param  array<array-key, string>  $texts
      * @param  array<array-key, MaskedText>  $masked
      * @param  array<array-key, string>  $hits
@@ -320,6 +345,9 @@ final class TranslationRunner
         return $translations;
     }
 
+    /**
+     * Dispatch the given event when events are enabled.
+     */
     private function fire(object $event): void
     {
         if ($this->config->eventsEnabled()) {
@@ -327,6 +355,9 @@ final class TranslationRunner
         }
     }
 
+    /**
+     * Normalize the given language code, validating it when strict mode is on.
+     */
     private function code(?string $code): ?string
     {
         if (blank($code)) {

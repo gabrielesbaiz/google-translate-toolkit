@@ -10,13 +10,26 @@ use Illuminate\Support\Facades\File;
 
 class TranslateCostCommand extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'translate:cost
         {text?* : Strings to price}
         {--file= : Price the contents of a file instead}
         {--to=* : Target languages (each one multiplies the cost)}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Estimate what a translation would cost before spending anything';
 
+    /**
+     * Execute the console command.
+     */
     public function handle(GoogleTranslateToolkit $toolkit): int
     {
         $texts = (array) $this->argument('text');

@@ -7,12 +7,18 @@ namespace Gabrielesbaiz\GoogleTranslateToolkit\Support;
 use Gabrielesbaiz\GoogleTranslateToolkit\Enums\TextFormat;
 
 /**
- * Hides tokens Google must not touch - ":name", "{count}", "{{ blade }}", "%s",
- * URLs, e-mails, handles and code spans - behind sentinels, then puts them back.
+ * Hides the tokens Google must not touch behind sentinels, then puts them back.
+ *
+ * Translation placeholders, Blade expressions, format specifiers, URLs, e-mail
+ * addresses, handles and code spans are all masked before a request is sent.
  */
 final class Placeholders
 {
-    /** Ordered: the greediest patterns run first so they win over the narrower ones. */
+    /**
+     * The built-in patterns, greediest first so they win over the narrower ones.
+     *
+     * @var array<int, string>
+     */
     public const PATTERNS = [
         '/<code\b[^>]*>.*?<\/code>/is',
         '/`[^`\n]+`/',
@@ -26,12 +32,21 @@ final class Placeholders
         '/(?<![\w@])@[A-Za-z0-9_]{2,}/',
     ];
 
-    /** @var array<int, string> */
+    /**
+     * The additional patterns supplied by the caller.
+     *
+     * @var array<int, string>
+     */
     private array $extra = [];
 
+    /**
+     * Create a new placeholders instance.
+     */
     public function __construct(private readonly Config $config) {}
 
     /**
+     * Create a copy of the instance with the given patterns added.
+     *
      * @param  array<int, string>  $patterns  additional regular expressions or literal terms
      */
     public function withPatterns(array $patterns): self
@@ -42,6 +57,9 @@ final class Placeholders
         return $clone;
     }
 
+    /**
+     * Replace every protected token in the text with a sentinel.
+     */
     public function mask(string $text, TextFormat $format = TextFormat::Text): MaskedText
     {
         if (! $this->config->placeholdersEnabled() && $this->extra === []) {
@@ -64,6 +82,8 @@ final class Placeholders
     }
 
     /**
+     * Put the original tokens back in place of their sentinels.
+     *
      * @param  array<string, string>  $map
      */
     public function restore(string $text, array $map): string
@@ -79,7 +99,9 @@ final class Placeholders
                 continue;
             }
 
-            // Google occasionally reformats the sentinel: recover it loosely.
+            // Google occasionally reformats a sentinel it was handed. Here we will
+            // match the sentinel loosely on its index alone so the original token
+            // still makes it back into the translated string.
             $index = (string) filter_var($sentinel, FILTER_SANITIZE_NUMBER_INT);
 
             $text = (string) preg_replace(
@@ -94,7 +116,7 @@ final class Placeholders
     }
 
     /**
-     * Mask a whole batch, keeping index alignment.
+     * Mask a whole batch of texts, keeping the original indexes aligned.
      *
      * @param  array<int, string>  $texts
      * @return array<int, MaskedText>
@@ -104,6 +126,9 @@ final class Placeholders
         return array_map(fn (string $text) => $this->mask($text, $format), $texts);
     }
 
+    /**
+     * Build the sentinel standing in for the token at the given index.
+     */
     private function sentinel(int $index, TextFormat $format): string
     {
         return $format->isHtml()
@@ -111,7 +136,11 @@ final class Placeholders
             : '⟦'.$index.'⟧';
     }
 
-    /** @return array<int, string> */
+    /**
+     * Get every pattern to mask, built-in and configured alike.
+     *
+     * @return array<int, string>
+     */
     private function patterns(): array
     {
         $configured = $this->config->placeholdersEnabled() ? self::PATTERNS : [];
@@ -122,6 +151,9 @@ final class Placeholders
         );
     }
 
+    /**
+     * Determine if the given pattern is already a regular expression.
+     */
     private function isRegex(string $pattern): bool
     {
         return (bool) preg_match('/^([\/#~%]).*\1[imsxuADSUXJn]*$/s', $pattern);

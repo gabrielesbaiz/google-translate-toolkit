@@ -12,6 +12,9 @@ use JsonSerializable;
  */
 final readonly class Estimate implements Arrayable, JsonSerializable
 {
+    /**
+     * Create a new estimate instance.
+     */
     public function __construct(
         public int $segments,
         public int $characters,
@@ -23,12 +26,19 @@ final readonly class Estimate implements Arrayable, JsonSerializable
         public int $cachedSegments = 0,
     ) {}
 
+    /**
+     * Get the estimated cost formatted with its currency.
+     */
     public function formattedCost(): string
     {
         return sprintf('%s %s', $this->currency, number_format($this->cost, 4));
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * Get the instance as an array.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -43,7 +53,11 @@ final readonly class Estimate implements Arrayable, JsonSerializable
         ];
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * Convert the object into something JSON serializable.
+     *
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();
