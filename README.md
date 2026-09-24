@@ -283,7 +283,7 @@ Uses Laravel's `RateLimiter`. When the ceiling is reached, the package throws
 
 ```php
 'glossary' => [
-    'protect' => ['Novias', 'Mailgun'],
+    'protect' => ['Acme', 'Acme Mailer'],
     'overrides' => [
         'it' => ['bounce' => 'rifiuto'],
     ],
@@ -494,7 +494,7 @@ GoogleTranslate::translateJson(
 
 ```php
 GoogleTranslate::to('it')
-    ->lazy(SentEmail::query()->lazyById()->pluck('delivery_message'))
+    ->lazy(Message::query()->lazyById()->pluck('body'))
     ->each(function ($translation) {
         // one Translation at a time, constant memory
     });
@@ -511,8 +511,8 @@ This is the part other packages get wrong. Google will happily translate
 URL. The package masks them before the call and puts them back after.
 
 ```php
-GoogleTranslate::justTranslate('Welcome back, :name — you have {count} items at https://novias.it');
-// "Bentornato, :name — hai {count} articoli su https://novias.it"
+GoogleTranslate::justTranslate('Welcome back, :name — you have {count} items at https://example.com');
+// "Bentornato, :name — hai {count} articoli su https://example.com"
 ```
 
 Ten patterns are shielded out of the box, greediest first:
@@ -524,8 +524,8 @@ Ten patterns are shielded out of the box, greediest first:
 | Blade comments | `{{-- hidden --}}` |
 | Blade / Handlebars | `{{ $user->name }}` |
 | Curly placeholders | `{count}`, `{first_name}` |
-| URLs | `https://novias.it/path?q=1` |
-| E-mail addresses | `support@novias.it` |
+| URLs | `https://example.com/path?q=1` |
+| E-mail addresses | `support@example.com` |
 | Laravel placeholders | `:name`, `:Name`, `:NAME` |
 | printf | `%s`, `%2$d`, `%.2f` |
 | Handles | `@gabrielesbaiz` |
@@ -534,7 +534,7 @@ Add your own, per call or globally:
 
 ```php
 // Per call — regex or literal
-GoogleTranslate::preserving(['/#[A-Za-z0-9_]+/', 'Novias Source'])->text($text);
+GoogleTranslate::preserving(['/#[A-Za-z0-9_]+/', 'Acme Mailer'])->text($text);
 
 // Globally
 'placeholders' => ['patterns' => ['/\[\[.*?\]\]/']],
@@ -559,12 +559,12 @@ Two different jobs, one config section.
 placeholder:
 
 ```php
-'glossary' => ['protect' => ['Novias', 'Mailgun', 'Postmark']],
+'glossary' => ['protect' => ['Acme', 'Acme Mailer']],
 ```
 
 ```php
-GoogleTranslate::justTranslate('Novias sent the message');
-// "Novias ha inviato il messaggio"  — the brand is untouched
+GoogleTranslate::justTranslate('Acme Mailer sent the message');
+// "Acme Mailer ha inviato il messaggio"  — the brand is untouched
 ```
 
 **Overrides** are applied *after* the translation comes back, so you can force
@@ -733,33 +733,33 @@ use Gabrielesbaiz\GoogleTranslateToolkit\Concerns\HasTranslations;
 use Gabrielesbaiz\GoogleTranslateToolkit\Contracts\Translatable;
 use Illuminate\Database\Eloquent\Model;
 
-class SentEmail extends Model implements Translatable
+class Message extends Model implements Translatable
 {
     use HasTranslations;
 
     public function translatableAttributes(): array
     {
-        return ['delivery_message'];
+        return ['body'];
     }
 }
 ```
 
 ```php
-// Fill delivery_message_it from delivery_message
-$email->translateAttributes()->save();
+// Fill body_it from body
+$message->translateAttributes()->save();
 
 // A different locale, an explicit source, only some attributes
-$email->translateAttributes(to: 'de', from: 'en', attributes: ['delivery_message'])->save();
+$message->translateAttributes(to: 'de', from: 'en', attributes: ['body'])->save();
 
 // Retranslate something that already has a value
-$email->translateAttributes(overwrite: true)->save();
+$message->translateAttributes(overwrite: true)->save();
 
 // Off to the queue
-$email->queueTranslateAttributes('it');
+$message->queueTranslateAttributes('it');
 
 // Read it back
-$email->getTranslatedAttribute('delivery_message', 'it');
-$email->translatedAttributeName('delivery_message', 'it');   // "delivery_message_it"
+$message->getTranslatedAttribute('body', 'it');
+$message->translatedAttributeName('body', 'it');   // "body_it"
 ```
 
 Already-translated rows are skipped, so running it twice costs nothing.
@@ -767,15 +767,15 @@ Already-translated rows are skipped, so running it twice costs nothing.
 Find what is still missing:
 
 ```php
-SentEmail::query()->whereTranslationMissing('delivery_message')->count();
-SentEmail::query()->whereTranslationMissing('delivery_message', 'de')->get();
+Message::query()->whereTranslationMissing('body')->count();
+Message::query()->whereTranslationMissing('body', 'de')->get();
 ```
 
 Backfill a table:
 
 ```bash
-php artisan translate:model "App\Models\SentEmail" --to=it --chunk=500
-php artisan translate:model "App\Models\SentEmail" --to=it --queue --limit=1000
+php artisan translate:model "App\Models\Message" --to=it --chunk=500
+php artisan translate:model "App\Models\Message" --to=it --queue --limit=1000
 ```
 
 ## Queues and deferred work
@@ -784,7 +784,7 @@ php artisan translate:model "App\Models\SentEmail" --to=it --queue --limit=1000
 use Gabrielesbaiz\GoogleTranslateToolkit\Jobs\TranslateAttributesJob;
 use Gabrielesbaiz\GoogleTranslateToolkit\Jobs\WarmTranslationCacheJob;
 
-TranslateAttributesJob::dispatch($email, 'it');
+TranslateAttributesJob::dispatch($message, 'it');
 WarmTranslationCacheJob::dispatch($strings, ['it', 'fr']);
 ```
 
@@ -797,8 +797,8 @@ response has been sent — the right tool for a webhook endpoint that must answe
 in milliseconds but still wants the translation:
 
 ```php
-GoogleTranslate::deferred()->translate($message, function ($translation) use ($email) {
-    $email->update(['delivery_message_it' => $translation->translatedText]);
+GoogleTranslate::deferred()->translate($text, function ($translation) use ($message) {
+    $message->update(['body_it' => $translation->translatedText]);
 });
 ```
 
@@ -971,7 +971,7 @@ JSON file.
 ### `translate:model`
 
 ```bash
-php artisan translate:model "App\Models\SentEmail" --to=it
+php artisan translate:model "App\Models\Message" --to=it
 php artisan translate:model "App\Models\Post" --to=de --attributes=title --attributes=body --chunk=500
 php artisan translate:model "App\Models\Post" --to=de --queue --limit=2000
 ```
@@ -1180,17 +1180,17 @@ Terminals: `translate`, `text`, `many`, `lazy`, `json`, `detect`, `roundTrip`,
 ### A webhook that must never fail
 
 ```php
-$sentEmail = SentEmail::query()->updateOrCreate(['id' => $payload->get('MessageID')], [
-    'delivery_message' => $payload->get('Description'),
-    'delivery_message_it' => GoogleTranslate::onFailUseSource()->text($payload->get('Description')),
+$message = Message::query()->updateOrCreate(['id' => $payload->get('MessageID')], [
+    'body' => $payload->get('Description'),
+    'body_it' => GoogleTranslate::onFailUseSource()->text($payload->get('Description')),
 ]);
 ```
 
 Or push it past the response entirely:
 
 ```php
-GoogleTranslate::deferred()->translate($description, fn ($t) => $sentEmail->update([
-    'delivery_message_it' => $t->translatedText,
+GoogleTranslate::deferred()->translate($description, fn ($t) => $message->update([
+    'body_it' => $t->translatedText,
 ]));
 ```
 
@@ -1223,7 +1223,7 @@ class PostResource extends JsonResource
 
 ```php
 // routes/console.php
-Schedule::command('translate:model', ['App\Models\SentEmail', '--to' => 'it', '--queue'])
+Schedule::command('translate:model', ['App\Models\Message', '--to' => 'it', '--queue'])
     ->dailyAt('02:00');
 ```
 

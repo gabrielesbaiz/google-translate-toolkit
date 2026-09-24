@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
  * Mirrors a column into a sibling column per locale: "body" -> "body_it".
  *
  * Pair it with the Translatable contract on your model:
- * `class SentEmail extends Model implements Translatable { use HasTranslations; }`
+ * `class Message extends Model implements Translatable { use HasTranslations; }`
  *
  * @mixin \Illuminate\Database\Eloquent\Model
  */
