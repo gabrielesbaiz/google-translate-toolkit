@@ -28,5 +28,7 @@ _ide_helper_models.php
 phpunit.xml
 phpstan.neon
 testbench.yaml
-/docs
 /coverage
+
+# The documentation site is served by GitHub Pages from /docs, so it is
+# committed rather than ignored.

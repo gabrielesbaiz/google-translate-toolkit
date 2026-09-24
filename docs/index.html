@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>GoogleTranslateToolkit</title>
+<meta name="description" content="Google Translate for Laravel: a fluent, immutable builder over the v2 REST endpoint with a cache that keeps most translations off the wire, placeholders that survive the round trip, a glossary, a daily budget and eight artisan commands.">
+<link rel="canonical" href="https://gabrielesbaiz.github.io/google-translate-toolkit/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#127760;</text></svg>">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GoogleTranslateToolkit">
+<meta property="og:title" content="GoogleTranslateToolkit — every language, on the board">
+<meta property="og:description" content="A fluent builder, a cache that means most translations never leave your server, and placeholders that survive the round trip. 137 languages, 8 artisan commands, 93 tests, zero network.">
+<meta property="og:url" content="https://gabrielesbaiz.github.io/google-translate-toolkit/">
+<meta property="og:image" content="https://gabrielesbaiz.github.io/google-translate-toolkit/logo.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GoogleTranslateToolkit — every language, on the board">
+<meta name="twitter:description" content="Google Translate for Laravel: fluent builder, cache-first, placeholder-safe. 137 languages, 8 artisan commands, 93 tests.">
+<meta name="twitter:image" content="https://gabrielesbaiz.github.io/google-translate-toolkit/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="app.css">
+</head>
+<body data-route="home">
+
+<div id="prog" aria-hidden="true"></div>
+<a class="skip" href="#docwrap">Skip to content</a>
+
+<header class="nav" id="topnav">
+  <div class="bar">
+    <a class="brand" href="#/home"><span class="dotmatrix"></span>GoogleTranslateToolkit <span class="ver">2.0</span></a>
+    <span class="sp"></span>
+    <nav id="navlinks" aria-label="Site">
+      <a href="#/home" data-nav="home">Home</a>
+      <a href="#/intro" data-nav="intro">Guide</a>
+      <a href="#/config" data-nav="config">Configuration</a>
+      <a href="#/commands" data-nav="commands">Commands</a>
+      <a href="#/changelog" data-nav="changelog">Changelog</a>
+      <a class="spon" href="https://github.com/sponsors/gabrielesbaiz">&#9829; Sponsor</a>
+    </nav>
+    <button class="kbtn" type="button" id="search" aria-label="Search the documentation"><span aria-hidden="true">&#9906;</span> <span class="kl">Search</span> <kbd>&#8984;K</kbd></button>
+    <button class="themebtn" type="button" id="theme" aria-label="Switch to the light theme">Light</button>
+    <button class="navbtn" type="button" id="navbtn" aria-expanded="false" aria-controls="navlinks" aria-label="Open the menu"><span aria-hidden="true">&#9776;</span></button>
+  </div>
+</header>
+
+<div class="homewrap" id="page-home" tabindex="-1">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">v2.0 &middot; Laravel 12–13 &middot; PHP 8.3+ &middot; MIT</span>
+      <h1>Every language, <span class="amb">on the board.</span></h1>
+      <p class="dek">Google Translate for Laravel, built the way the rest of your application is built — a fluent builder, a cache that means <b>most translations never leave your server</b>, and placeholders that survive the round trip.</p>
+
+      <div class="ctas">
+        <a class="btn p" href="#home-features">Get started &rarr;</a>
+        <a class="btn s" href="#home-pipeline">See how it works</a>
+        <span class="cmdline">$ <b id="composer">composer require gabrielesbaiz/google-translate-toolkit</b> <button class="copy" type="button" data-copy="composer require gabrielesbaiz/google-translate-toolkit">copy</button></span>
+      </div>
+
+      <div class="board flapboard rise">
+        <div class="flaprow" id="flaps" aria-hidden="true"></div>
+        <div class="flapmeta">
+          <span>Now showing <span class="k" id="nowlang">Italiano &middot; it</span></span>
+          <span>Source <span class="k">auto-detected</span></span>
+          <span class="push">Board cycles <span class="k" id="boardcount">6</span> of 137 languages</span>
+        </div>
+      </div>
+
+      <div class="deps rise" id="deps">
+        <div class="dep"><span class="code">FR</span><span class="src">Hello world</span><span class="dst">Bonjour le monde</span><span class="ms">0.4 ms</span><span class="st cache">CACHE</span></div>
+        <div class="dep"><span class="code">DE</span><span class="src">Hello world</span><span class="dst">Hallo Welt</span><span class="ms">0.4 ms</span><span class="st cache">CACHE</span></div>
+        <div class="dep"><span class="code">JA</span><span class="src">Hello world</span><span class="dst">こんにちは世界</span><span class="ms">186 ms</span><span class="st api">API</span></div>
+        <div class="dep"><span class="code">AR</span><span class="src">Hello world</span><span class="dst">مرحبا بالعالم</span><span class="ms">0.3 ms</span><span class="st cache">CACHE</span></div>
+      </div>
+
+      <div class="under">
+        <span>137 languages</span><span>0 SDK dependencies</span><span>93 tests, no network</span><span>PHPStan level 6</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <div class="wrap">
+    <div class="stats rise">
+      <div class="stat"><div class="n" data-count="137">0</div><div class="l">Languages, typed</div></div>
+      <div class="stat"><div class="n" data-count="94" data-suffix="%">0</div><div class="l">Typical cache hit rate</div></div>
+      <div class="stat"><div class="n" data-count="8">0</div><div class="l">Artisan commands</div></div>
+      <div class="stat"><div class="n" data-count="93">0</div><div class="l">Tests, zero network</div></div>
+    </div>
+  </div>
+
+  <!-- ============ FEATURES ============ -->
+  <section id="home-features">
+    <div class="wrap">
+      <div class="sechead rise">
+        <span class="eyebrow">What it does</span>
+        <h2 class="sec">Four HTTP endpoints. <em>Everything hard happens around them.</em></h2>
+        <p class="sec-dek">Calling the Translation API is easy. Paying for the same string twice, losing a placeholder, failing a queued job because Google had a bad minute — that is the part a package should take off your hands.</p>
+      </div>
+
+      <div class="feats">
+        <div class="feat rise">
+          <span class="tag">Cache first</span>
+          <h3>The bill you don't get</h3>
+          <p>Cached segments never reach the API, and a batch of a hundred strings only sends the ones it has not seen. Keyed by source, target, format and text, for 30 days.</p>
+        </div>
+        <div class="feat rise">
+          <span class="tag">Placeholders</span>
+          <h3>They come back intact</h3>
+          <p>Ten patterns are masked before the call and restored after — <code>:name</code>, <code>{count}</code>, <code>{{ $blade }}</code>, <code>%s</code>, URLs, e-mails, handles and code spans.</p>
+        </div>
+        <div class="feat rise">
+          <span class="tag">Glossary</span>
+          <h3>Your brand stays yours</h3>
+          <p>Protected terms never reach Google at all. Forced wording is applied on the way back, word-bounded and case-preserving, per locale.</p>
+        </div>
+        <div class="feat rise">
+          <span class="tag">Fan-out</span>
+          <h3>Many languages, one pool</h3>
+          <p><code>to(['it','fr','de'])</code> sends every chunk through a single bounded <code>Http::pool()</code>, groups targets that share cache misses, and returns a collection keyed by locale.</p>
+        </div>
+        <div class="feat rise">
+          <span class="tag">Resilience</span>
+          <h3>A bad minute isn't an outage</h3>
+          <p>Timeouts, retry with backoff on 429 and 5xx, an optional rate limiter, and <code>onFailUseSource()</code> so a webhook stores the original text instead of failing.</p>
+        </div>
+        <div class="feat rise">
+          <span class="tag">Testing</span>
+          <h3>A fake with assertions</h3>
+          <p><code>GoogleTranslate::fake()</code> returns deterministic text and records everything, so <code>assertTranslated()</code> reads like the rest of your suite. Nothing touches the network.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CODE ============ -->
+  <section id="home-code">
+    <div class="wrap">
+      <div class="sechead rise">
+        <span class="eyebrow">In your code</span>
+        <h2 class="sec">A builder that reads like <em>Laravel</em>.</h2>
+        <p class="sec-dek">Immutable, so a configured builder is safe to share. Every modifier returns a new instance; nothing happens until a terminal method runs.</p>
+      </div>
+
+      <div class="codewrap rise">
+        <div class="tabs" role="tablist" aria-label="Code examples">
+          <button class="tab" role="tab" aria-selected="true" data-code="c1"><span class="n">01</span><span class="ttl">Translate<span class="sub">One string, a batch, or one string into many languages.</span></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-code="c2"><span class="n">02</span><span class="ttl">Protect<span class="sub">Placeholders masked, brand names untouched.</span></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-code="c3"><span class="n">03</span><span class="ttl">Models<span class="sub">Mirror a column per locale, and find what's missing.</span></span></button>
+          <button class="tab" role="tab" aria-selected="false" data-code="c4"><span class="n">04</span><span class="ttl">Test<span class="sub">A fake, assertions, and no HTTP at all.</span></span></button>
+        </div>
+
+        <div class="board codepanel">
+          <div class="board-h"><span class="t" id="codetitle">translate.php</span><span class="r"><span class="live"><i></i>runs as shown</span></span></div>
+
+          <pre id="c1"><span class="kw">use</span> Gabrielesbaiz\GoogleTranslateToolkit\Facades\<span class="fn">GoogleTranslate</span>;
+
+<span class="cm">// The short way — source auto-detected, target from config</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">justTranslate</span>(<span class="str">'The message bounced'</span>);
+<span class="cm">// "Il messaggio è stato rifiutato"</span>
+
+<span class="cm">// The full object</span>
+<span class="var">$translation</span> = <span class="fn">GoogleTranslate</span>::<span class="fn">from</span>(<span class="str">'en'</span>)-&gt;<span class="fn">to</span>(<span class="str">'it'</span>)-&gt;<span class="fn">translate</span>(<span class="str">'Good morning'</span>);
+
+<span class="var">$translation</span>-&gt;translatedText;   <span class="cm">// "Buongiorno"</span>
+<span class="var">$translation</span>-&gt;sourceLanguage;   <span class="cm">// "en" — detected by Google</span>
+<span class="var">$translation</span>-&gt;cached;           <span class="cm">// false the first time, true after</span>
+
+<span class="cm">// Many languages, one pooled fan-out</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">to</span>([<span class="str">'it'</span>, <span class="str">'fr'</span>, <span class="str">'de'</span>])-&gt;<span class="fn">translate</span>(<span class="str">'Good morning'</span>);
+<span class="cm">// Collection keyed by locale</span></pre>
+
+          <pre id="c2" hidden><span class="cm">// Ten patterns are shielded out of the box</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">justTranslate</span>(
+    <span class="str">'Welcome back, :name — {count} items at https://example.com'</span>
+);
+<span class="cm">// "Bentornato, :name — {count} articoli su https://example.com"</span>
+
+<span class="cm">// Add your own, per call — regex or literal</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">preserving</span>([<span class="str">'/#[A-Za-z0-9_]+/'</span>])-&gt;<span class="fn">text</span>(<span class="var">$post</span>-&gt;body);
+
+<span class="cm">// config/google-translate-toolkit.php</span>
+<span class="str">'glossary'</span> =&gt; [
+    <span class="str">'protect'</span>   =&gt; [<span class="str">'Acme'</span>, <span class="str">'Acme Mailer'</span>],  <span class="cm">// never sent to Google</span>
+    <span class="str">'overrides'</span> =&gt; [
+        <span class="str">'it'</span> =&gt; [<span class="str">'bounce'</span> =&gt; <span class="str">'rifiuto'</span>],   <span class="cm">// forced after translating</span>
+    ],
+],</pre>
+
+          <pre id="c3" hidden><span class="kw">class</span> <span class="fn">Message</span> <span class="kw">extends</span> Model <span class="kw">implements</span> Translatable
+{
+    <span class="kw">use</span> HasTranslations;
+
+    <span class="kw">public function</span> <span class="fn">translatableAttributes</span>(): <span class="kw">array</span>
+    {
+        <span class="kw">return</span> [<span class="str">'body'</span>];  <span class="cm">// → body_it</span>
+    }
+}
+
+<span class="var">$message</span>-&gt;<span class="fn">translateAttributes</span>()-&gt;<span class="fn">save</span>();     <span class="cm">// inline</span>
+<span class="var">$message</span>-&gt;<span class="fn">queueTranslateAttributes</span>(<span class="str">'it'</span>);     <span class="cm">// queued</span>
+
+<span class="fn">Message</span>::<span class="fn">query</span>()
+    -&gt;<span class="fn">whereTranslationMissing</span>(<span class="str">'body'</span>)
+    -&gt;<span class="fn">count</span>();
+
+<span class="cm">// Backfill the whole table, chunked</span>
+<span class="cm">// php artisan translate:model "App\Models\Message" --to=it --queue</span></pre>
+
+          <pre id="c4" hidden><span class="var">$fake</span> = <span class="fn">GoogleTranslate</span>::<span class="fn">fake</span>([<span class="str">'Hello'</span> =&gt; <span class="str">'Ciao'</span>]);
+
+<span class="var">$this</span>-&gt;<span class="fn">postJson</span>(<span class="str">'/webhooks/postmark'</span>, <span class="var">$payload</span>)-&gt;<span class="fn">assertOk</span>();
+
+<span class="var">$fake</span>-&gt;<span class="fn">assertTranslated</span>(<span class="str">'Hello'</span>)
+     -&gt;<span class="fn">assertTranslatedTo</span>(<span class="str">'it'</span>)
+     -&gt;<span class="fn">assertTranslatedCount</span>(<span class="num">1</span>);
+
+<span class="cm">// Without stubs the fake returns "[it] Hello", so the</span>
+<span class="cm">// assertion failure message tells you what actually ran.</span>
+
+<span class="cm">// Prefer to assert on the wire? It is a plain Http client:</span>
+<span class="fn">Http</span>::<span class="fn">assertSent</span>(<span class="kw">fn</span> (<span class="var">$request</span>) =&gt; <span class="var">$request</span>[<span class="str">'target'</span>] === <span class="str">'it'</span>);</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PIPELINE ============ -->
+  <section id="home-pipeline">
+    <div class="wrap">
+      <div class="sechead rise">
+        <span class="eyebrow">Where your string actually goes</span>
+        <h2 class="sec">Six stops. <em>Four of them are free.</em></h2>
+        <p class="sec-dek">A single call through the package, in order. Only the fifth stop is billed, and only for the segments the cache could not answer.</p>
+      </div>
+
+      <div class="board rise">
+        <div class="board-h"><span class="t">Routing</span><span>translate("Welcome back, :name") → it</span><span class="r"><span class="live"><i></i>1 of 4 segments billed</span></span></div>
+        <div class="pipe" style="padding:12px">
+          <div class="step"><span class="i">01</span><div><h4>Mask</h4><p><code>:name</code> is swapped for a sentinel Google will not touch. The glossary's protected terms go with it.</p></div><span class="badge">0 ms</span></div>
+          <div class="step hit"><span class="i">02</span><div><h4>Cache partition</h4><p>The batch splits into hits and misses. Three of four segments are answered locally and never leave the process.</p></div><span class="badge">HIT ×3</span></div>
+          <div class="step"><span class="i">03</span><div><h4>Budget guard</h4><p>The remaining characters are counted against the daily ceiling. Over it, the call throws before a request is built.</p></div><span class="badge">1 208 chars</span></div>
+          <div class="step"><span class="i">04</span><div><h4>Chunk and pool</h4><p>Segments are split by count and by characters, then sent concurrently through one bounded pool.</p></div><span class="badge">1 request</span></div>
+          <div class="step"><span class="i">05</span><div><h4>Translate v2</h4><p>The only billed stop. The key travels in a header, retries fire on 429 and 5xx, and a failure can fall back to the source text.</p></div><span class="badge">186 ms</span></div>
+          <div class="step"><span class="i">06</span><div><h4>Restore</h4><p>Sentinels become placeholders again, glossary overrides are applied, the result is cached and the event fires.</p></div><span class="badge">0 ms</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMMANDS ============ -->
+  <section id="home-commands">
+    <div class="wrap">
+      <div class="sechead rise">
+        <span class="eyebrow">Departures</span>
+        <h2 class="sec">Eight commands. <em>No guesswork.</em></h2>
+        <p class="sec-dek">Translate a string, a lang file or a whole table — and price any of it before you spend a character.</p>
+      </div>
+
+      <div class="board rise">
+        <div class="board-h"><span class="t">php artisan</span><span class="r"><span>8 commands</span></span></div>
+        <div class="cmds" style="padding:12px">
+          <div class="cmd"><span class="c">translate:text</span><span class="d">Translate strings from the console. <code>--dry-run</code> prices it instead.</span><span class="g">ON TIME</span></div>
+          <div class="cmd"><span class="c">translate:languages</span><span class="d">List every supported language. <code>--offline</code> skips the API entirely.</span><span class="g">ON TIME</span></div>
+          <div class="cmd"><span class="c">translate:lang</span><span class="d">Translate <code>lang/{from}</code> into other locales, skipping lines that already exist.</span><span class="g">ON TIME</span></div>
+          <div class="cmd"><span class="c">translate:model</span><span class="d">Backfill a model's translated columns, chunked, optionally queued.</span><span class="g">BOARDING</span></div>
+          <div class="cmd"><span class="c">translate:audit</span><span class="d">Back-translate existing lang lines and flag the ones that lost their meaning.</span><span class="g">ON TIME</span></div>
+          <div class="cmd"><span class="c">translate:cost</span><span class="d">Price a translation before spending, from arguments or a file.</span><span class="g">ON TIME</span></div>
+          <div class="cmd"><span class="c">translate:stats</span><span class="d">Volume, cache hit rate and estimated spend, by day.</span><span class="g">ON TIME</span></div>
+          <div class="cmd"><span class="c">translate:cache-clear</span><span class="d">Invalidate everything the package cached, without touching the rest of your store.</span><span class="g">ON TIME</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COST ============ -->
+  <section id="home-cost">
+    <div class="wrap">
+      <div class="sechead rise">
+        <span class="eyebrow">Cost control</span>
+        <h2 class="sec">The cheapest translation is <em>the one you already paid for.</em></h2>
+        <p class="sec-dek">Google bills per million characters, per target language. The package counts what it spends, estimates before it spends it, and refuses to cross a ceiling you set.</p>
+      </div>
+
+      <div class="costgrid rise">
+        <div class="costcard"><div class="l">Characters from cache</div><div class="v amb" data-count="4128600">0</div><div class="s">last 30 days</div></div>
+        <div class="costcard"><div class="l">Not spent</div><div class="v grn" data-count="82.57" data-prefix="$" data-dec="2">$0</div><div class="s">at $20.00 per million</div></div>
+        <div class="costcard"><div class="l">Daily ceiling</div><div class="v" data-count="500000">0</div><div class="s">throws before the request is built</div></div>
+      </div>
+
+      <div class="board rise" style="margin-top:16px">
+        <div class="board-h"><span class="t">php artisan translate:stats --days=4</span></div>
+        <div class="tablewrap">
+          <table class="stats-t">
+            <thead><tr><th>date</th><th>calls</th><th>characters</th><th>cache hits</th><th>hit rate</th><th>failures</th><th>cost</th></tr></thead>
+            <tbody>
+              <tr><td class="m">2026-09-20</td><td>41</td><td>62 118</td><td>388</td><td class="g">90.4%</td><td>0</td><td>$1.24</td></tr>
+              <tr><td class="m">2026-09-21</td><td>12</td><td>18 402</td><td>419</td><td class="g">97.2%</td><td>0</td><td>$0.37</td></tr>
+              <tr><td class="m">2026-09-22</td><td>9</td><td>11 088</td><td>402</td><td class="g">97.8%</td><td>1</td><td>$0.22</td></tr>
+              <tr><td class="m">2026-09-23</td><td>6</td><td>7 640</td><td>511</td><td class="g">98.8%</td><td>0</td><td>$0.15</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LANGUAGES ============ -->
+  <section id="home-languages">
+    <div class="wrap">
+      <div class="sechead rise">
+        <span class="eyebrow">The shelf</span>
+        <h2 class="sec">137 languages, <em>as an enum.</em></h2>
+        <p class="sec-dek">Normalised (<code style="font-family:'IBM Plex Mono',monospace;color:var(--amber-soft)">ZH_tw → zh-TW</code>), validated, labelled, and honest about which nine read right to left.</p>
+      </div>
+    </div>
+    <div class="shelf rise">
+      <div class="track a" id="trackA"></div>
+      <div class="track b" id="trackB"></div>
+    </div>
+  </section>
+
+  <!-- ============ SUPPORT ============ -->
+  <section id="home-support">
+    <div class="wrap">
+      <div class="sponsor">
+        <div class="body rise">
+          <span class="eyebrow">Support this package</span>
+          <h2>Free forever.<br>Not free to <em>maintain.</em></h2>
+          <p>Translation is the kind of thing nobody notices until the day the bill doubles, a placeholder comes back mangled, or a queued job fails because Google had a bad minute. The work that prevents all three never shows up in anyone's budget.</p>
+          <p>Sponsorship is what keeps this one current with the frameworks it sits on, keeps the language enum honest as Google adds to it, and keeps the suite proving that every fix still holds. <b>It stays MIT either way.</b></p>
+        </div>
+
+        <div class="board tier rise">
+          <div class="price">$5</div>
+          <div class="terms">per month &middot; cancel anytime</div>
+          <a class="btn p" href="https://github.com/sponsors/gabrielesbaiz">&#9829; Become a sponsor</a>
+          <p class="fine">Company tiers get your logo in the README and on this page.</p>
+        </div>
+      </div>
+
+      <div class="ways">
+        <div class="way rise">
+          <span class="ico">&#11088;</span><span class="free">FREE</span>
+          <h3>Star the repo</h3>
+          <p>Thirty seconds, and it is the first signal other developers look at when deciding whether to trust a package.</p>
+        </div>
+        <div class="way rise">
+          <span class="ico">&#128027;</span><span class="free">FREE</span>
+          <h3>Open a good issue</h3>
+          <p>A clear reproduction is worth more than you think. Several fixes in 2.0 started as somebody else's bug report.</p>
+        </div>
+        <div class="way rise">
+          <span class="ico">&#10084;&#65039;</span>
+          <h3>Sponsor from $5</h3>
+          <p>Goes towards the maintenance nobody sees: framework upgrades, new language codes, and keeping the test matrix green.</p>
+        </div>
+        <div class="way rise">
+          <span class="ico">&#127970;</span>
+          <h3>Company tier</h3>
+          <p>Your logo here and in the README. If this package translates what your customers read, it is cheaper than the week you would spend rebuilding it.</p>
+        </div>
+      </div>
+
+      <div class="why rise">
+        <span class="h">&#9829;</span>
+        <p><b>Why ask at all?</b> This package is MIT and always will be. Nothing is paywalled, nothing phones home, and no feature is held back for sponsors. Sponsorship buys maintenance time, not features &mdash; and if you cannot sponsor, the star and the bug report genuinely help.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="doc" id="docwrap" hidden>
+
+  <!-- ================= TOC ================= -->
+  <button class="tocbtn" type="button" id="tocbtn" aria-expanded="false" aria-controls="toc"><span class="tocbtn-i" aria-hidden="true">&#9776;</span> Contents</button>
+  <nav class="toc" id="toc" aria-label="Guide contents">
+    <b>Getting started</b>
+    <a href="#/intro" data-go="intro">Introduction</a>
+    <a href="#/install" data-go="install">Installation</a>
+    <a href="#/quick" data-go="quick">Quick start</a>
+    <a href="#/config" data-go="config">Configuration</a>
+    <b>Translating</b>
+    <a href="#/protect" data-go="protect">Placeholders &amp; glossary</a>
+    <a href="#/cache" data-go="cache">Caching &amp; cost</a>
+    <a href="#/eloquent" data-go="eloquent">Models &amp; queues</a>
+    <b>Reference</b>
+    <a href="#/api" data-go="api">All methods</a>
+    <a href="#/commands" data-go="commands">Artisan commands</a>
+    <a href="#/testing" data-go="testing">Testing</a>
+    <b>More</b>
+    <a href="#/recipes" data-go="recipes">Recipes</a>
+    <a href="#/trouble" data-go="trouble">Troubleshooting</a>
+    <a href="#/project" data-go="project">Project &amp; licence</a>
+    <a href="#/upgrade" data-go="upgrade">Upgrading from 1.x</a>
+    <a href="#/changelog" data-go="changelog">Changelog</a>
+  </nav>
+
+  <!-- ================= PAGES ================= -->
+  <main id="content" tabindex="-1">
+
+    <!-- ---------- 01 INTRO ---------- -->
+    <section class="page on" id="intro" data-title="Introduction">
+      <span class="crumb">Getting started</span>
+      <h1>Google Translate, <em>the Laravel way.</em></h1>
+      <p class="lead">Calling the Cloud Translation API is four endpoints' worth of work. Everything hard about translating in a real application happens around that call — and that is what this package is.</p>
+
+      <h2>What it does</h2>
+      <p>GoogleTranslateToolkit is a fluent, immutable builder over the v2 REST endpoint, built on Laravel's own HTTP client. No Google SDK, no gRPC, no protobuf shims — which means <code>Http::fake()</code>, <code>Http::pool()</code> and every retry helper you already know work here unchanged.</p>
+
+      <ol class="uses">
+        <li><span>01</span><div><b>It caches, and the cache is the point</b><p>Cached segments never reach the API. A batch of a hundred strings only sends the ones it has not seen before, so the second deploy of the same content costs nothing.</p></div></li>
+        <li><span>02</span><div><b>Placeholders come back intact</b><p>Ten patterns are masked before the call and restored after — <code>:name</code>, <code>{count}</code>, <code>{{ $blade }}</code>, <code>%s</code>, URLs, e-mails, handles and code spans. Google never sees them, so it never translates them.</p></div></li>
+        <li><span>03</span><div><b>It refuses to surprise you on the invoice</b><p><code>estimate()</code> prices a call before it happens, a daily character budget throws rather than bills, and <code>translate:stats</code> shows the hit rate that explains both.</p></div></li>
+        <li><span>04</span><div><b>It fails the way a queued job should</b><p>Timeouts, retry with backoff on 429 and 5xx, and <code>onFailUseSource()</code> so a webhook stores the original text instead of failing the whole job.</p></div></li>
+      </ol>
+
+      <h2>Do you need it?</h2>
+      <p>Two questions, and the second is the one worth being honest about.</p>
+      <ol class="steps">
+        <li><b>Is the text produced at runtime?</b> Interface copy belongs in <code>lang/</code> files, written by a person. If what you are translating arrives with a webhook, a user or an import, keep reading.</li>
+        <li><b>Would translating the same string twice be embarrassing?</b> If yes, you want a cache, a budget and a hit rate — which is most of this package.</li>
+      </ol>
+
+      <div class="verdict">
+        <div class="vcol yes">
+          <b>Reach for this</b>
+          <ul>
+            <li>Runtime content: webhooks, imports, user submissions</li>
+            <li>Lang files you want machine-drafted, then reviewed</li>
+            <li>Anything that must not fail when Google does</li>
+            <li>Model columns mirrored per locale (<code>body</code> → <code>body_it</code>)</li>
+          </ul>
+        </div>
+        <div class="vcol no">
+          <b>Reach for something else</b>
+          <ul>
+            <li>Interface copy a translator should write properly</li>
+            <li>Legal, medical or safety text where accuracy is liability</li>
+            <li>Data you may not send to a third party</li>
+            <li>A single one-off string — paste it into Google yourself</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note warn"><b>It sends your text to Google.</b> That is the whole premise, and it is your call whether the data in question can go. Personal data, confidential business information and anything covered by the GDPR deserve a decision before the first call, not after.</div>
+
+      <h2>Requirements</h2>
+      <ul class="reqs">
+        <li><b>PHP 8.3</b> or newer</li>
+        <li><b>Laravel 12 or 13</b></li>
+        <li>A Google Cloud API key with the <b>Cloud Translation API</b> enabled</li>
+        <li>No database tables, no migrations, no published assets</li>
+      </ul>
+
+      <div class="note ok"><b>93 tests, zero network.</b> The suite runs entirely on <code>Http::fake()</code> with stray requests blocked, and static analysis is clean at PHPStan level 6.</div>
+    </section>
+
+    <!-- ---------- 02 INSTALL ---------- -->
+    <section class="page" id="install" data-title="Installation" hidden>
+      <span class="crumb">Getting started</span>
+      <h1>Installed in <em>one line.</em></h1>
+      <p class="lead">The service provider is auto-discovered. There is nothing to register, nothing to migrate and nothing to publish before it works.</p>
+
+      <h2>Install the package</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">terminal</span><span class="r"><button class="copy" data-copy="composer require gabrielesbaiz/google-translate-toolkit">copy</button></span></div>
+        <pre><span class="cm">$</span> composer require gabrielesbaiz/google-translate-toolkit</pre>
+      </div>
+
+      <h2>Publish the configuration</h2>
+      <p>Optional, but you will want it the moment you set a glossary or a budget.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">terminal</span><span class="r"><button class="copy" data-copy="php artisan vendor:publish --tag=&quot;google-translate-toolkit-config&quot;">copy</button></span></div>
+        <pre><span class="cm">$</span> php artisan vendor:publish --tag=<span class="str">"google-translate-toolkit-config"</span></pre>
+      </div>
+
+      <h2>Add your key</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">.env</span></div>
+        <pre>GOOGLE_TRANSLATE_API_KEY=<span class="str">your-cloud-console-key</span>
+GOOGLE_TRANSLATE_TARGET=<span class="str">it</span>
+<span class="cm"># GOOGLE_TRANSLATE_SOURCE is deliberately left empty:</span>
+<span class="cm"># Google detects the source language, which costs the same</span>
+<span class="cm"># and is more accurate than guessing.</span></pre>
+      </div>
+
+      <h2>Getting an API key</h2>
+      <ol class="steps">
+        <li>Open the <a class="ln" href="https://console.cloud.google.com/">Google Cloud console</a> and select or create a project.</li>
+        <li>Enable <b>Cloud Translation API</b> under <i>APIs &amp; Services → Library</i>.</li>
+        <li>Create an <b>API key</b> under <i>APIs &amp; Services → Credentials</i>.</li>
+        <li>Restrict it: <i>API restrictions → Cloud Translation API</i>, plus an IP restriction if your servers have fixed addresses.</li>
+      </ol>
+
+      <div class="note ok"><b>The key never touches a URL.</b> It travels in an <code>X-goog-api-key</code> header, so it does not end up in proxy logs, browser history or your error tracker.</div>
+
+      <h2>Verify</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">terminal</span><span class="r"><button class="copy" data-copy='php artisan translate:text "Hello world" --to=it'>copy</button></span></div>
+        <pre><span class="cm">$</span> php artisan translate:text <span class="str">"Hello world"</span> --to=it
+
+ <span class="cm">from   to   source        translation   origin</span>
+ <span class="cm">auto</span>   <span class="fn">it</span>   Hello world   Ciao mondo    <span class="str">api</span></pre>
+      </div>
+      <div class="note"><b>Nothing printed?</b> Run <code>php artisan config:clear</code> — a config cached before you set the key will still be holding the old, empty value.</div>
+    </section>
+
+    <!-- ---------- 03 QUICK ---------- -->
+    <section class="page" id="quick" data-title="Quick start" hidden>
+      <span class="crumb">Getting started</span>
+      <h1>Five minutes, <em>start to finish.</em></h1>
+      <p class="lead">Two facade names are registered and both resolve the same instance: <code>GoogleTranslateToolkit</code> (the 1.x name) and <code>GoogleTranslate</code>.</p>
+
+      <h2>Translate something</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">translate.php</span><span class="r"><button class="copy" data-copy="GoogleTranslate::justTranslate('The message bounced');">copy</button></span></div>
+        <pre><span class="kw">use</span> Gabrielesbaiz\GoogleTranslateToolkit\Facades\<span class="fn">GoogleTranslate</span>;
+
+<span class="cm">// The short way — source auto-detected, target from config</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">justTranslate</span>(<span class="str">'The message bounced'</span>);
+<span class="cm">// "Il messaggio è stato rifiutato"</span>
+
+<span class="cm">// The full object</span>
+<span class="var">$translation</span> = <span class="fn">GoogleTranslate</span>::<span class="fn">translate</span>(<span class="str">'Good morning'</span>);
+
+<span class="var">$translation</span>-&gt;translatedText;   <span class="cm">// "Buongiorno"</span>
+<span class="var">$translation</span>-&gt;sourceLanguage;   <span class="cm">// "en" — detected by Google</span>
+<span class="var">$translation</span>-&gt;cached;           <span class="cm">// false now, true next time</span>
+(<span class="kw">string</span>) <span class="var">$translation</span>;          <span class="cm">// "Buongiorno"</span></pre>
+      </div>
+
+      <h2>The builder</h2>
+      <p>Every modifier returns a <b>new</b> instance, so a configured builder is safe to store and reuse. Nothing happens until a terminal method runs.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">builder.php</span></div>
+        <pre><span class="var">$italian</span> = <span class="fn">GoogleTranslate</span>::<span class="fn">from</span>(<span class="str">'en'</span>)-&gt;<span class="fn">to</span>(<span class="str">'it'</span>);
+
+<span class="var">$italian</span>-&gt;<span class="fn">text</span>(<span class="str">'Hello'</span>);                 <span class="cm">// string</span>
+<span class="var">$italian</span>-&gt;<span class="fn">asHtml</span>()-&gt;<span class="fn">text</span>(<span class="var">$post</span>-&gt;body);  <span class="cm">// a different builder</span>
+<span class="var">$italian</span>-&gt;<span class="fn">many</span>([<span class="str">'one'</span>, <span class="str">'two'</span>]);          <span class="cm">// TranslationCollection</span>
+
+<span class="cm">// Many languages, one pooled fan-out</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">to</span>([<span class="str">'it'</span>, <span class="str">'fr'</span>, <span class="str">'de'</span>])-&gt;<span class="fn">translate</span>(<span class="str">'Good morning'</span>);
+<span class="cm">// Collection keyed by locale</span></pre>
+      </div>
+
+      <h2>What comes back</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>You pass</th><th>One target</th><th>Several targets</th></tr></thead>
+          <tbody>
+            <tr><td>A string</td><td><code>Translation</code></td><td><code>Collection&lt;locale, Translation&gt;</code></td></tr>
+            <tr><td>An array</td><td><code>TranslationCollection</code></td><td><code>Collection&lt;locale, TranslationCollection&gt;</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><b>Objects that behave like the old arrays.</b> <code>Translation</code> is readonly, but it implements <code>ArrayAccess</code> with the 1.x keys — <code>$t['translated_text']</code> still works, as does <code>toArray()</code> and <code>json_encode()</code>.</div>
+
+      <h2>Terminal methods</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+          <tbody>
+            <tr><td><code>translate($text)</code></td><td>A <code>Translation</code>, a collection, or one per locale</td></tr>
+            <tr><td><code>text($string)</code></td><td>The translated string, nothing else</td></tr>
+            <tr><td><code>many($iterable)</code></td><td><code>TranslationCollection</code></td></tr>
+            <tr><td><code>lazy($iterable)</code></td><td><code>LazyCollection</code>, chunked and pooled</td></tr>
+            <tr><td><code>json($payload)</code></td><td>The same array shape, selected leaves translated</td></tr>
+            <tr><td><code>detect($text)</code></td><td><code>DetectedLanguage</code></td></tr>
+            <tr><td><code>roundTrip($text)</code></td><td><code>RoundTripResult</code> with a 0–1 score</td></tr>
+            <tr><td><code>estimate($texts)</code></td><td><code>Estimate</code> — spends nothing</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---------- 04 CONFIG ---------- -->
+    <section class="page" id="config" data-title="Configuration" hidden>
+      <span class="crumb">Getting started</span>
+      <h1>Every key, <em>and why it exists.</em></h1>
+      <p class="lead">Every setting has a working default. Delete the ones you do not care about — the package falls back to what is documented here.</p>
+
+      <h2>Credentials and defaults</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">config/google-translate-toolkit.php</span></div>
+        <pre><span class="str">'api_key'</span>  =&gt; <span class="fn">env</span>(<span class="str">'GOOGLE_TRANSLATE_API_KEY'</span>, <span class="fn">env</span>(<span class="str">'GOOGLE_DEVELOPER_KEY'</span>)),
+<span class="str">'base_url'</span> =&gt; <span class="fn">env</span>(<span class="str">'GOOGLE_TRANSLATE_BASE_URL'</span>, <span class="str">'https://translation.googleapis.com/language/translate/v2'</span>),
+
+<span class="str">'default_source'</span> =&gt; <span class="fn">env</span>(<span class="str">'GOOGLE_TRANSLATE_SOURCE'</span>),   <span class="cm">// null = auto-detect</span>
+<span class="str">'default_target'</span> =&gt; <span class="fn">env</span>(<span class="str">'GOOGLE_TRANSLATE_TARGET'</span>),   <span class="cm">// null = app.locale</span>
+<span class="str">'default_format'</span> =&gt; <span class="str">'text'</span>,                          <span class="cm">// or 'html'</span>
+<span class="str">'strict_languages'</span> =&gt; <span class="kw">true</span>,</pre>
+      </div>
+      <div class="note"><b>Leave <code>default_source</code> empty.</b> Google detects the source language for the same price, and a string that is already Italian then stops being translated <i>from</i> English. <code>GOOGLE_DEVELOPER_KEY</code> is read as a fallback so 1.x applications keep working untouched.</div>
+
+      <h2>HTTP and chunking</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Key</th><th>Default</th><th>What it controls</th></tr></thead>
+          <tbody>
+            <tr><td><code>http.timeout</code></td><td>10</td><td>Seconds before a request is abandoned</td></tr>
+            <tr><td><code>http.connect_timeout</code></td><td>5</td><td>Seconds to establish the connection</td></tr>
+            <tr><td><code>http.retry.times</code></td><td>3</td><td>Attempts on connection errors, 429 and 5xx</td></tr>
+            <tr><td><code>http.retry.sleep</code></td><td>250</td><td>Milliseconds before the first retry</td></tr>
+            <tr><td><code>http.retry.backoff</code></td><td>true</td><td>Doubles the wait each attempt</td></tr>
+            <tr><td><code>http.concurrency</code></td><td>5</td><td>Requests in flight per pool</td></tr>
+            <tr><td><code>chunk.max_segments</code></td><td>100</td><td>Segments per request (the endpoint allows 128)</td></tr>
+            <tr><td><code>chunk.max_characters</code></td><td>20000</td><td>Characters per request</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><b>A 4xx is your mistake, not Google's.</b> Anything other than 429 is returned immediately rather than retried three times.</div>
+
+      <h2>Cache, limits and resilience</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Key</th><th>Default</th><th>What it controls</th></tr></thead>
+          <tbody>
+            <tr><td><code>cache.enabled</code></td><td>true</td><td>The single biggest saving in the package</td></tr>
+            <tr><td><code>cache.store</code></td><td>null</td><td>Which store to use; null is your default</td></tr>
+            <tr><td><code>cache.ttl</code></td><td>30 days</td><td>How long a translation stays valid</td></tr>
+            <tr><td><code>cache.prefix</code></td><td><code>gtt</code></td><td>Key namespace, also used by the flush</td></tr>
+            <tr><td><code>rate_limit.enabled</code></td><td>false</td><td>Guards the quota with Laravel's RateLimiter</td></tr>
+            <tr><td><code>rate_limit.max_per_minute</code></td><td>600</td><td>Requests, not characters</td></tr>
+            <tr><td><code>fallback_to_source</code></td><td>false</td><td>Return the source text instead of throwing</td></tr>
+            <tr><td><code>budget.max_characters_per_day</code></td><td>null</td><td>Throws before the request is built</td></tr>
+            <tr><td><code>events</code></td><td>true</td><td>Fires <code>TranslationCompleted</code> / <code>TranslationFailed</code></td></tr>
+            <tr><td><code>attribute_suffix</code></td><td><code>_{locale}</code></td><td>Column naming for <code>HasTranslations</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Language codes</h2>
+      <p>Codes are normalised before anything else happens: <code>ZH_tw</code>, <code>zh-tw</code> and <code>zh-TW</code> are the same language. With <code>strict_languages</code> on, an unknown code throws <code>UnsupportedLanguageException</code> rather than spending a request to find out.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">Language.php</span></div>
+        <pre><span class="kw">use</span> Gabrielesbaiz\GoogleTranslateToolkit\Enums\<span class="fn">Language</span>;
+
+<span class="fn">Language</span>::Italian-&gt;value;               <span class="cm">// "it"</span>
+<span class="fn">Language</span>::ChineseTraditional-&gt;<span class="fn">label</span>();  <span class="cm">// "Chinese (Traditional)"</span>
+<span class="fn">Language</span>::Arabic-&gt;<span class="fn">isRtl</span>();               <span class="cm">// true — 9 of the 137 are</span>
+<span class="fn">Language</span>::<span class="fn">normalize</span>(<span class="str">'ZH_tw'</span>);            <span class="cm">// "zh-TW"</span>
+<span class="fn">Language</span>::<span class="fn">options</span>();                     <span class="cm">// Collection&lt;code, label&gt; for a select</span></pre>
+      </div>
+      <div class="note"><b>A language Google added yesterday?</b> Set <code>strict_languages</code> to <code>false</code> and the code is passed straight through — then open an issue so the enum catches up.</div>
+    </section>
+
+    <!-- ---------- 05 PROTECT ---------- -->
+    <section class="page" id="protect" data-title="Placeholders &amp; glossary" hidden>
+      <span class="crumb">Translating</span>
+      <h1>The part other packages <em>get wrong.</em></h1>
+      <p class="lead">Google will happily translate <code>:name</code>, reorder <code>%s</code>, break <code>{{ $blade }}</code> and put a space in the middle of a URL. This package masks those before the call and restores them after.</p>
+
+      <div class="board">
+        <div class="board-h"><span class="t">placeholders.php</span></div>
+        <pre><span class="fn">GoogleTranslate</span>::<span class="fn">justTranslate</span>(
+    <span class="str">'Welcome back, :name — {count} items at https://example.com'</span>
+);
+<span class="cm">// "Bentornato, :name — {count} articoli su https://example.com"</span></pre>
+      </div>
+
+      <h2>What is shielded out of the box</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Pattern</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Code blocks</td><td><code>&lt;code&gt;php artisan&lt;/code&gt;</code></td></tr>
+            <tr><td>Backtick spans</td><td><code>`composer update`</code></td></tr>
+            <tr><td>Blade comments</td><td><code>{{-- hidden --}}</code></td></tr>
+            <tr><td>Blade / Handlebars</td><td><code>{{ $user-&gt;name }}</code></td></tr>
+            <tr><td>Curly placeholders</td><td><code>{count}</code>, <code>{first_name}</code></td></tr>
+            <tr><td>URLs</td><td><code>https://example.com/path?q=1</code></td></tr>
+            <tr><td>E-mail addresses</td><td><code>support@example.com</code></td></tr>
+            <tr><td>Laravel placeholders</td><td><code>:name</code>, <code>:Name</code>, <code>:NAME</code></td></tr>
+            <tr><td>printf</td><td><code>%s</code>, <code>%2$d</code>, <code>%.2f</code></td></tr>
+            <tr><td>Handles</td><td><code>@gabrielesbaiz</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>In plain-text mode the mask is <code>⟦0⟧</code>; in HTML mode it is <code>&lt;span translate="no"&gt;0&lt;/span&gt;</code>, which Google is obliged to leave alone. Restoration is tolerant: if a space appears inside the sentinel, the package still finds it.</p>
+
+      <h2>Adding your own</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">custom.php</span></div>
+        <pre><span class="cm">// Per call — a regex, or a literal that gets quoted for you</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">preserving</span>([<span class="str">'/#[A-Za-z0-9_]+/'</span>, <span class="str">'Acme Mailer'</span>])
+    -&gt;<span class="fn">text</span>(<span class="var">$post</span>-&gt;body);
+
+<span class="cm">// Globally</span>
+<span class="str">'placeholders'</span> =&gt; [
+    <span class="str">'enabled'</span>  =&gt; <span class="kw">true</span>,
+    <span class="str">'patterns'</span> =&gt; [<span class="str">'/\[\[.*?\]\]/'</span>],
+],
+
+<span class="cm">// Off, when you know the text is plain prose</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">query</span>()-&gt;<span class="fn">withoutPreserving</span>()-&gt;<span class="fn">text</span>(<span class="var">$text</span>);</pre>
+      </div>
+
+      <h2>Glossary</h2>
+      <p>Two different jobs share one config section. <b>Protected terms</b> are masked like a placeholder and never reach Google at all. <b>Overrides</b> are applied after the translation comes back, so you can force domain wording Google gets wrong.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">config/google-translate-toolkit.php</span></div>
+        <pre><span class="str">'glossary'</span> =&gt; [
+    <span class="str">'protect'</span> =&gt; [<span class="str">'Acme'</span>, <span class="str">'Acme Mailer'</span>],
+
+    <span class="str">'overrides'</span> =&gt; [
+        <span class="str">'it'</span> =&gt; [
+            <span class="str">'rimbalzo'</span> =&gt; <span class="str">'rifiuto'</span>,
+            <span class="str">'consegna fallita'</span> =&gt; <span class="str">'mancata consegna'</span>,
+        ],
+    ],
+],</pre>
+      </div>
+      <div class="note ok"><b>Capitalisation survives.</b> Matching is case-insensitive and word-bounded: <code>Rimbalzo</code> becomes <code>Rifiuto</code>, <code>RIMBALZO</code> becomes <code>RIFIUTO</code>. Skip the whole mechanism for one call with <code>withoutGlossary()</code>.</div>
+
+      <h2>Checking the result</h2>
+      <p>Back-translation is the cheapest useful check there is: translate out, translate back, and score how much meaning survived.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">quality.php</span></div>
+        <pre><span class="var">$check</span> = <span class="fn">GoogleTranslate</span>::<span class="fn">roundTrip</span>(<span class="str">'The message was rejected'</span>, via: <span class="str">'it'</span>);
+
+<span class="var">$check</span>-&gt;translated;          <span class="cm">// "Il messaggio è stato rifiutato"</span>
+<span class="var">$check</span>-&gt;back;                <span class="cm">// "The message was rejected"</span>
+<span class="var">$check</span>-&gt;score;               <span class="cm">// 1.0</span>
+<span class="var">$check</span>-&gt;<span class="fn">isSuspicious</span>(<span class="num">0.6</span>);   <span class="cm">// false</span></pre>
+      </div>
+      <div class="note warn"><b>It costs twice.</b> A round trip is two calls, so it is never enabled implicitly. <code>php artisan translate:audit</code> runs it across a whole lang file and tells you the bill before it starts.</div>
+    </section>
+
+    <!-- ---------- 06 CACHE ---------- -->
+    <section class="page" id="cache" data-title="Caching &amp; cost" hidden>
+      <span class="crumb">Translating</span>
+      <h1>Most translations <em>never leave your server.</em></h1>
+      <p class="lead">Translations are deterministic enough to cache, and caching them is the single biggest thing this package does for your bill.</p>
+
+      <h2>How a batch is split</h2>
+      <p>A batch is <b>partitioned</b>, not cached whole. Hits are served locally, and only the misses are sent — so adding one new string to a hundred old ones costs one string.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">partition</span></div>
+        <pre><span class="fn">GoogleTranslate</span>::<span class="fn">translateBatch</span>([<span class="str">'one'</span>, <span class="str">'two'</span>]);          <span class="cm">// 1 request, 2 segments</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">translateBatch</span>([<span class="str">'one'</span>, <span class="str">'two'</span>, <span class="str">'three'</span>]); <span class="cm">// 1 request, 1 segment</span>
+
+<span class="var">$t</span> = <span class="fn">GoogleTranslate</span>::<span class="fn">translate</span>(<span class="str">'one'</span>);
+<span class="var">$t</span>-&gt;cached;   <span class="cm">// true — it never went out</span></pre>
+      </div>
+      <p>The key is <code>sha1(source|target|format|text)</code> under <code>cache.prefix</code>. Source, target and format are all part of it, so <code>text</code> and <code>html</code> are separate entries — as are two different target languages for the same string.</p>
+
+      <h2>Controlling it</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">cache.php</span></div>
+        <pre><span class="fn">GoogleTranslate</span>::<span class="fn">withoutCache</span>()-&gt;<span class="fn">text</span>(<span class="str">'Hello'</span>);       <span class="cm">// always calls</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">withCache</span>(ttl: <span class="num">3600</span>)-&gt;<span class="fn">text</span>(<span class="str">'Hello'</span>); <span class="cm">// one hour</span>
+
+<span class="fn">GoogleTranslate</span>::<span class="fn">flushCache</span>();   <span class="cm">// bumps a namespace version</span>
+<span class="cm">// php artisan translate:cache-clear</span>
+
+<span class="cm">// Pre-fill before a launch, on the queue</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">warm</span>(<span class="var">$strings</span>, [<span class="str">'it'</span>, <span class="str">'de'</span>, <span class="str">'fr'</span>]);</pre>
+      </div>
+      <div class="note ok"><b>Flushing is namespaced.</b> It bumps an internal version counter rather than calling <code>Cache::flush()</code>, so nothing else in your application loses its cache.</div>
+
+      <h2>Knowing the cost first</h2>
+      <p>Google bills per million characters, per target language. Fan-out multiplies: three targets is three times the characters.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">estimate.php</span></div>
+        <pre><span class="var">$estimate</span> = <span class="fn">GoogleTranslate</span>::<span class="fn">estimate</span>(<span class="var">$texts</span>, [<span class="str">'it'</span>, <span class="str">'fr'</span>]);
+
+<span class="var">$estimate</span>-&gt;segments;             <span class="cm">// 128</span>
+<span class="var">$estimate</span>-&gt;characters;           <span class="cm">// 8 402</span>
+<span class="var">$estimate</span>-&gt;billableCharacters;   <span class="cm">// 16 804 — two targets</span>
+<span class="var">$estimate</span>-&gt;cachedSegments;       <span class="cm">// 31 already answered locally</span>
+<span class="var">$estimate</span>-&gt;requests;             <span class="cm">// 4</span>
+<span class="var">$estimate</span>-&gt;<span class="fn">formattedCost</span>();      <span class="cm">// "USD 0.3361"</span></pre>
+      </div>
+
+      <h2>A ceiling that holds</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">config/google-translate-toolkit.php</span></div>
+        <pre><span class="str">'budget'</span> =&gt; [<span class="str">'max_characters_per_day'</span> =&gt; <span class="num">500_000</span>],</pre>
+      </div>
+      <div class="note warn"><b>It throws before it spends.</b> <code>BudgetExceededException</code> is raised while the request is still being assembled, so crossing the ceiling costs nothing. Counters live in the cache store, keyed by day.</div>
+
+      <h2>Watching the spend</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">php artisan translate:stats --days=4</span></div>
+        <pre> <span class="cm">date         calls  characters  cache hits  hit rate  cost</span>
+ 2026-09-20      41      62 118         388    <span class="str">90.4%</span>   $1.24
+ 2026-09-21      12      18 402         419    <span class="str">97.2%</span>   $0.37
+ 2026-09-22       9      11 088         402    <span class="str">97.8%</span>   $0.22
+ 2026-09-23       6       7 640         511    <span class="str">98.8%</span>   $0.15</pre>
+      </div>
+      <p>The same numbers are available in code through <code>GoogleTranslate::stats(7)</code>, and the raw counters through <code>usage()</code>.</p>
+
+      <h2>When Google has a bad minute</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">resilience.php</span></div>
+        <pre><span class="cm">// Throw — the default</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">justTranslate</span>(<span class="var">$text</span>);
+
+<span class="cm">// Return the source text instead, and carry on</span>
+<span class="fn">GoogleTranslate</span>::<span class="fn">onFailUseSource</span>()-&gt;<span class="fn">text</span>(<span class="var">$text</span>);
+
+<span class="cm">// Or globally, for every call</span>
+<span class="str">'fallback_to_source'</span> =&gt; <span class="kw">true</span>,</pre>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Exception</th><th>Raised when</th></tr></thead>
+          <tbody>
+            <tr><td><code>MissingApiKeyException</code></td><td>No key configured — thrown lazily, on first call</td></tr>
+            <tr><td><code>UnsupportedLanguageException</code></td><td>Unknown code while <code>strict_languages</code> is on</td></tr>
+            <tr><td><code>InvalidFormatException</code></td><td>A format other than <code>text</code> or <code>html</code></td></tr>
+            <tr><td><code>TranslationFailedException</code></td><td>Non-2xx, transport error, or a malformed payload</td></tr>
+            <tr><td><code>RateLimitExceededException</code></td><td>Local rate limit reached; carries <code>$secondsUntilAvailable</code></td></tr>
+            <tr><td><code>BudgetExceededException</code></td><td>The daily character budget would be crossed</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Everything extends <code>GoogleTranslateException</code>, which extends <code>RuntimeException</code> — so catching <code>\Exception</code> still works exactly as it did in 1.x.</p>
+    </section>
+
+    <!-- ---------- 07 ELOQUENT ---------- -->
+    <section class="page" id="eloquent" data-title="Models &amp; queues" hidden>
+      <span class="crumb">Translating</span>
+      <h1>One column, <em>one locale.</em></h1>
+      <p class="lead">The convention is a sibling column per language — <code>body</code> and <code>body_it</code> — which is what most applications already do by hand.</p>
+
+      <h2>The trait</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">app/Models/Message.php</span></div>
+        <pre><span class="kw">use</span> Gabrielesbaiz\GoogleTranslateToolkit\Concerns\HasTranslations;
+<span class="kw">use</span> Gabrielesbaiz\GoogleTranslateToolkit\Contracts\Translatable;
+
+<span class="kw">class</span> <span class="fn">Message</span> <span class="kw">extends</span> Model <span class="kw">implements</span> Translatable
+{
+    <span class="kw">use</span> HasTranslations;
+
+    <span class="kw">public function</span> <span class="fn">translatableAttributes</span>(): <span class="kw">array</span>
+    {
+        <span class="kw">return</span> [<span class="str">'body'</span>];   <span class="cm">// → body_it</span>
+    }
+}</pre>
+      </div>
+      <div class="note"><b>Why a method and not a property?</b> A trait property cannot be overridden on the model without a composition error, and the contract keeps static analysis honest. The interface is satisfied entirely by the trait — you only add <code>implements Translatable</code>.</div>
+
+      <h2>Filling the columns</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">usage.php</span></div>
+        <pre><span class="var">$message</span>-&gt;<span class="fn">translateAttributes</span>()-&gt;<span class="fn">save</span>();                  <span class="cm">// default locale</span>
+<span class="var">$message</span>-&gt;<span class="fn">translateAttributes</span>(to: <span class="str">'de'</span>, from: <span class="str">'en'</span>)-&gt;<span class="fn">save</span>();
+<span class="var">$message</span>-&gt;<span class="fn">translateAttributes</span>(overwrite: <span class="kw">true</span>)-&gt;<span class="fn">save</span>();   <span class="cm">// redo it</span>
+
+<span class="var">$message</span>-&gt;<span class="fn">queueTranslateAttributes</span>(<span class="str">'it'</span>);                  <span class="cm">// off to the queue</span>
+
+<span class="var">$message</span>-&gt;<span class="fn">getTranslatedAttribute</span>(<span class="str">'body'</span>, <span class="str">'it'</span>);
+<span class="var">$message</span>-&gt;<span class="fn">translatedAttributeName</span>(<span class="str">'body'</span>, <span class="str">'it'</span>);
+<span class="cm">// "body_it"</span></pre>
+      </div>
+      <div class="note ok"><b>Running it twice is free.</b> A row that already has a value is skipped unless you pass <code>overwrite: true</code>, so a nightly backfill only pays for what arrived that day.</div>
+
+      <h2>Finding what is missing</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">query.php</span></div>
+        <pre><span class="fn">Message</span>::<span class="fn">query</span>()-&gt;<span class="fn">whereTranslationMissing</span>(<span class="str">'body'</span>)-&gt;<span class="fn">count</span>();
+<span class="fn">Message</span>::<span class="fn">query</span>()-&gt;<span class="fn">whereTranslationMissing</span>(<span class="str">'body'</span>, <span class="str">'de'</span>)-&gt;<span class="fn">get</span>();</pre>
+      </div>
+      <p>The scope matches rows where the source column has content and the translated column does not — which is exactly what <code>translate:model</code> walks.</p>
+
+      <h2>Backfilling a table</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">terminal</span><span class="r"><button class="copy" data-copy='php artisan translate:model "App\Models\Message" --to=it --chunk=500'>copy</button></span></div>
+        <pre><span class="cm">$</span> php artisan translate:model <span class="str">"App\Models\Message"</span> --to=it --chunk=500
+<span class="cm">$</span> php artisan translate:model <span class="str">"App\Models\Post"</span> --to=de --queue --limit=2000</pre>
+      </div>
+
+      <h2>After the response, not during it</h2>
+      <p>For a webhook that must answer in milliseconds, <code>deferred()</code> runs the translation once the response has been sent, using Laravel's <code>defer()</code>.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">WebhookController.php</span></div>
+        <pre><span class="fn">GoogleTranslate</span>::<span class="fn">deferred</span>()-&gt;<span class="fn">translate</span>(<span class="var">$description</span>, <span class="kw">function</span> (<span class="var">$translation</span>) <span class="kw">use</span> (<span class="var">$message</span>) {
+    <span class="var">$message</span>-&gt;<span class="fn">update</span>([<span class="str">'body_it'</span> =&gt; <span class="var">$translation</span>-&gt;translatedText]);
+});</pre>
+      </div>
+      <div class="note"><b>In the console it runs inline.</b> Nothing is silently skipped in a command, a test or a queued job — <code>defer()</code> only defers where there is a response to send first.</div>
+
+      <h2>Events</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Event</th><th>Carries</th></tr></thead>
+          <tbody>
+            <tr><td><code>TranslationCompleted</code></td><td><code>translations</code>, <code>target</code>, <code>source</code>, <code>characters</code>, <code>cacheHits</code>, <code>requests</code></td></tr>
+            <tr><td><code>TranslationFailed</code></td><td><code>exception</code>, <code>texts</code>, <code>target</code>, <code>source</code>, <code>recovered</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><code>recovered</code> is <code>true</code> when the failure was absorbed by <code>onFailUseSource()</code> — useful for a log line that distinguishes "degraded" from "broken".</p>
+    </section>
+
+    <!-- ---------- ALL METHODS ---------- -->
+    <section class="page" id="api" data-title="All methods" hidden>
+      <span class="crumb">Reference</span>
+      <h1>Every method, <em>in one place.</em></h1>
+      <p class="lead">The facade proxies a single singleton. Anything that opens a builder returns a <code>PendingTranslation</code>; anything that ends one returns data.</p>
+
+      <h2>Opening a builder</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Method</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td><code>query()</code></td><td>A fresh builder carrying the configured defaults</td></tr>
+            <tr><td><code>from($language)</code></td><td>Sets the source; <code>null</code> lets Google detect</td></tr>
+            <tr><td><code>to($language|$languages)</code></td><td>One target, or several for a pooled fan-out</td></tr>
+            <tr><td><code>format($format)</code> · <code>asText()</code> · <code>asHtml()</code></td><td>Output format</td></tr>
+            <tr><td><code>withCache(?$ttl)</code> · <code>withoutCache()</code></td><td>Cache behaviour for this call</td></tr>
+            <tr><td><code>onFailUseSource($bool)</code> · <code>onFailThrow()</code></td><td>What a failure does</td></tr>
+            <tr><td><code>preserving(array)</code> · <code>withoutPreserving()</code></td><td>Placeholder shielding</td></tr>
+            <tr><td><code>withoutGlossary()</code></td><td>Skip protected terms and overrides</td></tr>
+            <tr><td><code>detectSource()</code></td><td>Force auto-detection, ignoring the configured source</td></tr>
+            <tr><td><code>deferred($bool)</code></td><td>Run after the response has been sent</td></tr>
+            <tr><td><code>when()</code> · <code>unless()</code></td><td>Conditionable, as everywhere else in Laravel</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Translating and detecting</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+          <tbody>
+            <tr><td><code>translate($text, $from, $to, $format)</code></td><td><code>Translation</code>, <code>TranslationCollection</code>, or a collection per locale</td></tr>
+            <tr><td><code>justTranslate($text, $from, $to)</code></td><td><code>string</code> — the 1.x shorthand</td></tr>
+            <tr><td><code>translateBatch($texts, …)</code></td><td><code>TranslationCollection</code></td></tr>
+            <tr><td><code>translateJson($payload, $only, $except, …)</code></td><td>The same array shape, selected leaves translated</td></tr>
+            <tr><td><code>lazy($texts, $from, $to, $chunkSize)</code></td><td><code>LazyCollection&lt;Translation&gt;</code></td></tr>
+            <tr><td><code>unlessLanguageIs($code, $text, …)</code></td><td><code>Translation</code>; check <code>isUnchanged()</code></td></tr>
+            <tr><td><code>isLanguage($text, $language)</code></td><td><code>bool</code></td></tr>
+            <tr><td><code>detect($text)</code></td><td><code>DetectedLanguage</code> or a collection of them</td></tr>
+            <tr><td><code>detectLanguage()</code> · <code>detectLanguageBatch()</code></td><td>1.x names, same objects</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Languages, quality and cost</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Method</th><th>Returns</th></tr></thead>
+          <tbody>
+            <tr><td><code>languages($display)</code></td><td>What Google supports, named and cached for a day</td></tr>
+            <tr><td><code>supportedLanguages()</code></td><td>The bundled enum — no API call</td></tr>
+            <tr><td><code>getAvailableTranslationsFor($code)</code></td><td>1.x alias of <code>languages()</code></td></tr>
+            <tr><td><code>sanitizeLanguageCode($code)</code></td><td>Normalised code, or throws</td></tr>
+            <tr><td><code>roundTrip($text, $via, $from)</code></td><td><code>RoundTripResult</code> with a 0–1 score</td></tr>
+            <tr><td><code>estimate($texts, $targets)</code></td><td><code>Estimate</code> — spends nothing</td></tr>
+            <tr><td><code>usage()</code> · <code>stats($days)</code></td><td>Character accounting</td></tr>
+            <tr><td><code>warm($texts, $targets, $from)</code></td><td>A queued <code>Bus::batch()</code> that fills the cache</td></tr>
+            <tr><td><code>flushCache()</code></td><td>Bumps the cache namespace version</td></tr>
+            <tr><td><code>fake($stubs)</code></td><td><code>FakeTranslator</code>, bound into the container</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Data objects</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Class</th><th>Members</th></tr></thead>
+          <tbody>
+            <tr><td><code>Translation</code></td><td><code>sourceText</code>, <code>translatedText</code>, <code>sourceLanguage</code>, <code>targetLanguage</code>, <code>format</code>, <code>detected</code>, <code>cached</code>; <code>isUnchanged()</code>, <code>toArray()</code>, <code>toJson()</code></td></tr>
+            <tr><td><code>DetectedLanguage</code></td><td><code>text</code>, <code>languageCode</code>, <code>confidence</code>, <code>reliable</code>; <code>language()</code>, <code>is()</code></td></tr>
+            <tr><td><code>TranslationCollection</code></td><td><code>texts()</code>, <code>dictionary()</code>, <code>toStrings()</code>, plus everything on <code>Collection</code></td></tr>
+            <tr><td><code>Estimate</code></td><td><code>segments</code>, <code>characters</code>, <code>billableCharacters</code>, <code>cachedSegments</code>, <code>requests</code>, <code>targets</code>, <code>cost</code>; <code>formattedCost()</code></td></tr>
+            <tr><td><code>RoundTripResult</code></td><td><code>source</code>, <code>translated</code>, <code>back</code>, <code>score</code>; <code>isSuspicious()</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Blade, macros and helpers</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">sugar.blade.php</span></div>
+        <pre><span class="cm">{{-- target first, source second --}}</span>
+@translate(<span class="var">$post</span>-&gt;title)
+@translate(<span class="var">$post</span>-&gt;title, <span class="str">'fr'</span>)
+@translate(<span class="var">$post</span>-&gt;title, <span class="str">'fr'</span>, <span class="str">'en'</span>)
+@translateHtml(<span class="var">$post</span>-&gt;body, <span class="str">'fr'</span>)</pre>
+      </div>
+      <div class="board">
+        <div class="board-h"><span class="t">macros.php</span></div>
+        <pre><span class="fn">Str</span>::<span class="fn">translate</span>(<span class="str">'hello'</span>, <span class="str">'fr'</span>);
+<span class="fn">str</span>(<span class="str">'hello'</span>)-&gt;<span class="fn">translateTo</span>(<span class="str">'de'</span>)-&gt;<span class="fn">upper</span>();
+<span class="fn">str</span>(<span class="str">'bonjour'</span>)-&gt;<span class="fn">detectLanguage</span>();        <span class="cm">// "fr"</span>
+<span class="fn">collect</span>([<span class="str">'a'</span>, <span class="str">'b'</span>])-&gt;<span class="fn">translate</span>(<span class="str">'fr'</span>);
+<span class="fn">google_translate</span>(<span class="str">'hello'</span>, <span class="str">'es'</span>);</pre>
+      </div>
+      <div class="note"><b>Nothing collides.</b> Every macro is registered only if the name is still free, so your own <code>Str::translate()</code> wins if you already have one.</div>
+
+      <h2>Validation and casting</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">validation.php</span></div>
+        <pre><span class="var">$request</span>-&gt;<span class="fn">validate</span>([
+    <span class="str">'locale'</span> =&gt; [<span class="str">'required'</span>, <span class="fn">Rule</span>::<span class="fn">language</span>()],
+    <span class="str">'target'</span> =&gt; [<span class="str">'required'</span>, <span class="fn">Rule</span>::<span class="fn">language</span>([<span class="str">'it'</span>, <span class="str">'en'</span>, <span class="str">'fr'</span>])],
+]);
+
+<span class="kw">protected function</span> <span class="fn">casts</span>(): <span class="kw">array</span>
+{
+    <span class="kw">return</span> [<span class="str">'locale'</span> =&gt; AsLanguage::<span class="kw">class</span>];   <span class="cm">// Language enum in, ISO code out</span>
+}</pre>
+      </div>
+
+      <h2>Swapping the driver</h2>
+      <p>Bind anything implementing the <code>Translator</code> contract — a different provider, an on-premise model, or a canned dataset for a demo tenant. Cache, placeholders, glossary, budget, events, Eloquent and the commands all keep working on top of it.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">AppServiceProvider.php</span></div>
+        <pre><span class="var">$this</span>-&gt;app-&gt;<span class="fn">singleton</span>(Translator::<span class="kw">class</span>, DeepLTranslator::<span class="kw">class</span>);</pre>
+      </div>
+    </section>
+
+    <!-- ---------- 08 COMMANDS ---------- -->
+    <section class="page" id="commands" data-title="Artisan commands" hidden>
+      <span class="crumb">Reference</span>
+      <h1>Eight commands, <em>no guesswork.</em></h1>
+      <p class="lead">Translate a string, a lang file or a whole table — and price any of it before you spend a character.</p>
+
+      <div class="rows">
+        <div class="row"><span class="c">translate:text</span><span class="d">Translate strings from the console</span><span class="g">ON TIME</span></div>
+        <div class="row"><span class="c">translate:languages</span><span class="d">List every supported language</span><span class="g">ON TIME</span></div>
+        <div class="row"><span class="c">translate:lang</span><span class="d">Translate lang files into other locales</span><span class="g">ON TIME</span></div>
+        <div class="row"><span class="c">translate:model</span><span class="d">Backfill a model's translated columns</span><span class="g">BOARDING</span></div>
+        <div class="row"><span class="c">translate:audit</span><span class="d">Back-translate existing lines and flag the weak ones</span><span class="g">ON TIME</span></div>
+        <div class="row"><span class="c">translate:cost</span><span class="d">Price a translation before spending</span><span class="g">ON TIME</span></div>
+        <div class="row"><span class="c">translate:stats</span><span class="d">Volume, cache hit rate and estimated spend</span><span class="g">ON TIME</span></div>
+        <div class="row"><span class="c">translate:cache-clear</span><span class="d">Invalidate everything the package cached</span><span class="g">ON TIME</span></div>
+      </div>
+
+      <h2>translate:text</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">terminal</span></div>
+        <pre><span class="cm">$</span> php artisan translate:text <span class="str">"Hello world"</span> <span class="str">"Good evening"</span> --to=it --to=fr
+<span class="cm">$</span> php artisan translate:text <span class="str">"Hello"</span> --from=en --to=de --format=html --no-cache
+<span class="cm">$</span> php artisan translate:text <span class="str">"Hello"</span> --to=it --dry-run   <span class="cm"># price only</span></pre>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Flag</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>--from=</code></td><td>Source code; omit it and Google detects</td></tr>
+            <tr><td><code>--to=*</code></td><td>One or more targets</td></tr>
+            <tr><td><code>--format=</code></td><td><code>text</code> (default) or <code>html</code></td></tr>
+            <tr><td><code>--no-cache</code></td><td>Bypass the cache for this run</td></tr>
+            <tr><td><code>--dry-run</code></td><td>Report the cost, send nothing</td></tr>
+            <tr><td><code>--json</code></td><td>Raw JSON output</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>translate:lang</h2>
+      <p>Reads <code>lang/{from}/*.php</code> and <code>lang/{from}.json</code>, translates only the lines the target does not have yet, and writes formatted PHP and JSON back. Placeholder protection is on, so <code>:attribute</code> and <code>{count}</code> survive. Nested arrays keep their structure and keys are sorted.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">terminal</span><span class="r"><button class="copy" data-copy="php artisan translate:lang --from=en --to=it --to=fr --dry-run">copy</button></span></div>
+        <pre><span class="cm">$</span> php artisan translate:lang --from=en --to=it --to=fr --dry-run
+ <span class="str">INFO</span>  [it] 214 lines would be translated (18 402 characters, USD 0.3680).
+ <span class="str">INFO</span>  [fr] 214 lines would be translated (18 402 characters, USD 0.3680).
+
+<span class="cm">$</span> php artisan translate:lang --from=en --to=it --group=auth --group=validation</pre>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Flag</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>--from=</code></td><td>Source locale, default <code>en</code></td></tr>
+            <tr><td><code>--to=*</code></td><td>Target locales</td></tr>
+            <tr><td><code>--group=*</code></td><td>Only these files; <code>__json</code> is the JSON file</td></tr>
+            <tr><td><code>--force</code></td><td>Overwrite lines that already exist</td></tr>
+            <tr><td><code>--dry-run</code></td><td>Count and price, write nothing</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>translate:model</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Flag</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>--to=</code> / <code>--from=</code></td><td>Target and source locales</td></tr>
+            <tr><td><code>--attributes=*</code></td><td>Limit to these attributes</td></tr>
+            <tr><td><code>--chunk=</code></td><td>Rows per chunk, default 200</td></tr>
+            <tr><td><code>--limit=</code></td><td>Stop after this many rows</td></tr>
+            <tr><td><code>--queue</code></td><td>Dispatch a job per row instead of translating inline</td></tr>
+            <tr><td><code>--overwrite</code></td><td>Retranslate rows that already have a value</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>The rest</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">terminal</span></div>
+        <pre><span class="cm">$</span> php artisan translate:languages --target=it --search=chin
+<span class="cm">$</span> php artisan translate:languages --offline        <span class="cm"># no API call</span>
+<span class="cm">$</span> php artisan translate:audit --to=it --threshold=0.7 --limit=200
+<span class="cm">$</span> php artisan translate:cost --file=storage/app/strings.txt --to=it
+<span class="cm">$</span> php artisan translate:stats --days=30
+<span class="cm">$</span> php artisan translate:cache-clear</pre>
+      </div>
+      <div class="note"><b>Schedule the slow ones.</b> <code>translate:model --queue</code> pairs well with a nightly schedule: the command only queues rows the scope says are missing, so a quiet night queues nothing.</div>
+    </section>
+
+    <!-- ---------- 09 TESTING ---------- -->
+    <section class="page" id="testing" data-title="Testing" hidden>
+      <span class="crumb">Reference</span>
+      <h1>No network, <em>ever.</em></h1>
+      <p class="lead">Two ways to test code that translates: the package's own fake, or Laravel's HTTP fake. Both are first-class, because underneath it really is just an HTTP client.</p>
+
+      <h2>The fake</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">WebhookTest.php</span></div>
+        <pre><span class="var">$fake</span> = <span class="fn">GoogleTranslate</span>::<span class="fn">fake</span>();
+
+<span class="var">$this</span>-&gt;<span class="fn">postJson</span>(<span class="str">'/webhooks/postmark'</span>, <span class="var">$payload</span>)-&gt;<span class="fn">assertOk</span>();
+
+<span class="var">$fake</span>-&gt;<span class="fn">assertTranslated</span>(<span class="str">'The recipient rejected the message'</span>)
+     -&gt;<span class="fn">assertTranslatedTo</span>(<span class="str">'it'</span>)
+     -&gt;<span class="fn">assertTranslatedCount</span>(<span class="num">1</span>);</pre>
+      </div>
+      <p>Without stubs the fake returns <code>"[it] the original text"</code>, which keeps failure messages readable — you can see at a glance what actually ran.</p>
+
+      <h2>Stubbing</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">stubs.php</span></div>
+        <pre><span class="fn">GoogleTranslate</span>::<span class="fn">fake</span>([
+    <span class="str">'Hello'</span>   =&gt; <span class="str">'Ciao'</span>,                                  <span class="cm">// any target</span>
+    <span class="str">'Bye'</span>     =&gt; [<span class="str">'it'</span> =&gt; <span class="str">'Ciao ciao'</span>, <span class="str">'fr'</span> =&gt; <span class="str">'Au revoir'</span>],  <span class="cm">// per target</span>
+    <span class="str">'Dynamic'</span> =&gt; <span class="kw">fn</span> (<span class="var">$text</span>, <span class="var">$target</span>) =&gt; <span class="str">"</span><span class="var">$target</span><span class="str">:</span><span class="var">$text</span><span class="str">"</span>,        <span class="cm">// computed</span>
+])-&gt;<span class="fn">detectAs</span>(<span class="str">'fr'</span>);</pre>
+      </div>
+
+      <h2>Assertions</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Assertion</th><th>Checks</th></tr></thead>
+          <tbody>
+            <tr><td><code>assertTranslated($text, ?$target)</code></td><td>That text was translated; accepts a closure</td></tr>
+            <tr><td><code>assertNotTranslated($text)</code></td><td>That it was not</td></tr>
+            <tr><td><code>assertNothingTranslated()</code></td><td>No translation happened at all</td></tr>
+            <tr><td><code>assertTranslatedCount($n)</code></td><td>Exactly <code>$n</code> translation calls</td></tr>
+            <tr><td><code>assertTranslatedTo($locale)</code></td><td>Something was translated into that locale</td></tr>
+            <tr><td><code>assertDetected(?$text)</code></td><td>Detection ran, optionally for that text</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The recording is open too: <code>recorded()</code>, <code>recordedDetections()</code> and <code>translatedTexts()</code> return collections you can assert on directly.</p>
+
+      <h2>Asserting on the wire</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">HttpTest.php</span></div>
+        <pre><span class="fn">Http</span>::<span class="fn">fake</span>([<span class="str">'*translate/v2*'</span> =&gt; <span class="fn">Http</span>::<span class="fn">response</span>([
+    <span class="str">'data'</span> =&gt; [<span class="str">'translations'</span> =&gt; [[<span class="str">'translatedText'</span> =&gt; <span class="str">'Ciao mondo'</span>]]],
+])]);
+
+<span class="fn">GoogleTranslate</span>::<span class="fn">justTranslate</span>(<span class="str">'Hello world'</span>);
+
+<span class="fn">Http</span>::<span class="fn">assertSent</span>(<span class="kw">fn</span> (<span class="var">$request</span>) =&gt;
+    <span class="var">$request</span>[<span class="str">'target'</span>] === <span class="str">'it'</span>
+    &amp;&amp; <span class="var">$request</span>-&gt;<span class="fn">hasHeader</span>(<span class="str">'X-goog-api-key'</span>)
+);</pre>
+      </div>
+      <div class="note ok"><b>Block strays.</b> Add <code>Http::preventStrayRequests()</code> to your <code>TestCase</code> and any forgotten fake becomes a failing test instead of a live API call. That is how this package's own 93 tests are written.</div>
+
+      <div class="note warn"><b>Watch the cache in tests.</b> Caching is on by default, so a second identical call inside one test will not hit your fake. Either assert the count you actually expect, or disable it: <code>config()-&gt;set('google-translate-toolkit.cache.enabled', false)</code>.</div>
+    </section>
+
+    <!-- ---------- RECIPES ---------- -->
+    <section class="page" id="recipes" data-title="Recipes" hidden>
+      <span class="crumb">More</span>
+      <h1>Four jobs, <em>worked through.</em></h1>
+      <p class="lead">Each of these is a real shape the package was built for, written the way it would be written in an application.</p>
+
+      <h2>A webhook that must never fail</h2>
+      <p>The job's real work is storing a bounce record. A translation that fails should degrade, not take the record with it.</p>
+      <div class="board">
+        <div class="board-h"><span class="t">PostmarkBounceJob.php</span></div>
+        <pre><span class="var">$message</span> = <span class="fn">Message</span>::<span class="fn">query</span>()-&gt;<span class="fn">updateOrCreate</span>([<span class="str">'id'</span> =&gt; <span class="var">$payload</span>[<span class="str">'MessageID'</span>]], [
+    <span class="str">'body'</span>    =&gt; <span class="var">$payload</span>[<span class="str">'Description'</span>],
+    <span class="str">'body_it'</span> =&gt; <span class="fn">GoogleTranslate</span>::<span class="fn">onFailUseSource</span>()
+        -&gt;<span class="fn">text</span>(<span class="var">$payload</span>[<span class="str">'Description'</span>]),
+]);</pre>
+      </div>
+      <p>Or push it past the response entirely, so the endpoint answers in milliseconds:</p>
+      <div class="board">
+        <div class="board-h"><span class="t">deferred.php</span></div>
+        <pre><span class="fn">GoogleTranslate</span>::<span class="fn">deferred</span>()-&gt;<span class="fn">translate</span>(<span class="var">$description</span>, <span class="kw">fn</span> (<span class="var">$t</span>) =&gt; <span class="var">$message</span>-&gt;<span class="fn">update</span>([
+    <span class="str">'body_it'</span> =&gt; <span class="var">$t</span>-&gt;translatedText,
+]));</pre>
+      </div>
+
+      <h2>Drafting a whole application's lang files</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">terminal</span></div>
+        <pre><span class="cm">$</span> php artisan translate:lang --from=en --to=it --to=fr --to=de --dry-run
+<span class="cm">$</span> php artisan translate:lang --from=en --to=it --to=fr --to=de
+<span class="cm">$</span> php artisan translate:audit --to=it --threshold=0.65</pre>
+      </div>
+      <div class="note"><b>Draft, then read.</b> Machine translation is a first draft for interface copy, not a final one. The audit pass exists so you know which twenty lines to read rather than all two hundred.</div>
+
+      <h2>An API resource in the caller's language</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">PostResource.php</span></div>
+        <pre><span class="kw">public function</span> <span class="fn">toArray</span>(<span class="var">$request</span>): <span class="kw">array</span>
+{
+    <span class="kw">return</span> <span class="fn">GoogleTranslate</span>::<span class="fn">to</span>(<span class="var">$request</span>-&gt;<span class="fn">user</span>()-&gt;locale)-&gt;<span class="fn">json</span>([
+        <span class="str">'id'</span>    =&gt; <span class="var">$this</span>-&gt;id,
+        <span class="str">'title'</span> =&gt; <span class="var">$this</span>-&gt;title,
+        <span class="str">'body'</span>  =&gt; <span class="var">$this</span>-&gt;body,
+        <span class="str">'slug'</span>  =&gt; <span class="var">$this</span>-&gt;slug,
+    ], only: [<span class="str">'title'</span>, <span class="str">'body'</span>]);
+}</pre>
+      </div>
+      <div class="note warn"><b>Cache or regret it.</b> A resource translated per request is a resource billed per request the first time each string appears. Leave the cache on, and consider <code>warm()</code> after a content import.</div>
+
+      <h2>A nightly backfill</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">routes/console.php</span></div>
+        <pre><span class="fn">Schedule</span>::<span class="fn">command</span>(<span class="str">'translate:model'</span>, [
+    <span class="str">'App\Models\Message'</span>, <span class="str">'--to'</span> =&gt; <span class="str">'it'</span>, <span class="str">'--queue'</span>,
+])-&gt;<span class="fn">dailyAt</span>(<span class="str">'02:00'</span>);</pre>
+      </div>
+      <p>The command only walks rows the <code>whereTranslationMissing</code> scope returns, so a quiet night queues nothing and costs nothing.</p>
+    </section>
+
+    <!-- ---------- TROUBLESHOOTING ---------- -->
+    <section class="page" id="trouble" data-title="Troubleshooting" hidden>
+      <span class="crumb">More</span>
+      <h1>When it doesn't <em>do what you meant.</em></h1>
+      <p class="lead">Seven symptoms that cover almost everything, with the cause rather than a workaround.</p>
+
+      <h2>MissingApiKeyException</h2>
+      <p><code>GOOGLE_TRANSLATE_API_KEY</code> is unset — or the config was cached before you set it. Run <code>php artisan config:clear</code>. The exception is thrown lazily on the first call, not at boot, so a missing key never breaks an unrelated deploy.</p>
+
+      <h2>"API key not valid"</h2>
+      <p>The key exists, but the Cloud Translation API is not enabled on that project, or a key restriction is blocking it. Check <i>APIs &amp; Services → Library</i> first, then the key's restrictions.</p>
+
+      <h2>UnsupportedLanguageException for a code Google supports</h2>
+      <p>The bundled enum is behind. Set <code>'strict_languages' =&gt; false</code> to pass the code straight through, and please open an issue so the enum catches up.</p>
+
+      <h2>Placeholders still come back broken</h2>
+      <p>The pattern is not one of the ten built-ins. Add it with <code>preserving(['/your-pattern/'])</code> or in <code>placeholders.patterns</code>. Anything that looks like <code>/…/</code> is treated as a regex; anything else is quoted as a literal for you.</p>
+
+      <h2>Translations don't change after a glossary edit</h2>
+      <p>The old value is cached — the glossary is applied before the result is stored. <code>php artisan translate:cache-clear</code>, then try again.</p>
+
+      <h2>The same string is translated twice</h2>
+      <p>Check <code>cache.enabled</code>, then remember what the key is made of: source, target, format and text. <code>text</code> and <code>html</code> are separate entries, and so are two targets for one string.</p>
+
+      <h2>Tests hit the network</h2>
+      <p>Call <code>GoogleTranslate::fake()</code> or <code>Http::fake()</code>. Add <code>Http::preventStrayRequests()</code> to your <code>TestCase</code> and a forgotten fake becomes a failing test rather than a live call.</p>
+
+      <div class="note ok"><b>Still stuck?</b> A clear reproduction is worth more than you think — the package's issue template asks for the config, the call and what came back, which is usually enough to see it.</div>
+    </section>
+
+    <!-- ---------- PROJECT ---------- -->
+    <section class="page" id="project" data-title="Project &amp; licence" hidden>
+      <span class="crumb">More</span>
+      <h1>What you're <em>relying on.</em></h1>
+      <p class="lead">A small package with a narrow job, tested properly, and honest about what it sends where.</p>
+
+      <h2>Requirements and support</h2>
+      <ul class="reqs">
+        <li><b>PHP 8.3</b> or newer</li>
+        <li><b>Laravel 12 or 13</b>, both covered by the test matrix</li>
+        <li>A Google Cloud API key with the <b>Cloud Translation API</b> enabled</li>
+        <li>No migrations, no tables, no published assets</li>
+      </ul>
+
+      <h2>What ships in the box</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Figure</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Languages in the enum</td><td>137, nine of them right to left</td></tr>
+            <tr><td>Protected placeholder patterns</td><td>10, extendable</td></tr>
+            <tr><td>Artisan commands</td><td>8</td></tr>
+            <tr><td>Tests</td><td class="g">93, none of them touching the network</td></tr>
+            <tr><td>Static analysis</td><td class="g">PHPStan level 6, clean</td></tr>
+            <tr><td>Runtime dependencies</td><td>Laravel only — no Google SDK</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Running the suite</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">terminal</span></div>
+        <pre><span class="cm">$</span> composer test        <span class="cm"># Pest</span>
+<span class="cm">$</span> composer analyse     <span class="cm"># PHPStan level 6</span>
+<span class="cm">$</span> composer format      <span class="cm"># Pint</span></pre>
+      </div>
+      <p>Those three commands are the contract. A pull request that keeps them green is a pull request that will be read quickly.</p>
+
+      <h2>Privacy, plainly</h2>
+      <div class="note warn"><b>This package sends your text to Google.</b> That is the premise, not a side effect. Whoever deploys it decides whether the data in question can go — personal data, confidential business information and anything covered by the GDPR deserve that decision before the first call. Machine translation is also not a substitute for a professional translator where accuracy carries legal or safety consequences, and cost figures here are estimates: the authoritative number is on your Google Cloud invoice.</div>
+
+      <h2>Credits</h2>
+      <p>Written and maintained by <a class="ln" href="https://github.com/gabrielesbaiz">Gabriele Sbaiz</a>. The 1.x line began as a fork of <a class="ln" href="https://github.com/JoggApp/laravel-google-translate">JoggApp/laravel-google-translate</a>; 2.0 is a rewrite, and the debt is gladly acknowledged. Built on Laravel and <a class="ln" href="https://github.com/spatie/laravel-package-tools">spatie/laravel-package-tools</a>.</p>
+
+      <h2>Licence</h2>
+      <p>MIT, and it will stay MIT. Nothing is paywalled, nothing phones home, and no feature is held back for sponsors — <a class="ln" href="https://github.com/sponsors/gabrielesbaiz">sponsorship</a> buys maintenance time, not features.</p>
+    </section>
+
+    <!-- ---------- 10 UPGRADE ---------- -->
+    <section class="page" id="upgrade" data-title="Upgrading from 1.x" hidden>
+      <span class="crumb">More</span>
+      <h1>Upgrading from <em>1.x.</em></h1>
+      <p class="lead">2.0 is a rewrite, but the calls your application already makes keep working. Two things changed on purpose; everything else is shimmed.</p>
+
+      <h2>The two real changes</h2>
+      <div class="note warn"><b>The Blade directive was swapped.</b> In 1.x, <code>@translate($text, 'it')</code> passed <code>'it'</code> into the <b>source</b> slot, so the text was translated <i>from</i> Italian. It now reads target first, source second. If you compensated for that bug, undo it.</div>
+      <div class="note warn"><b><code>unlessLanguageIs()</code> has one return type.</b> It used to return a raw string when the language already matched and an array otherwise. It now always returns a <code>Translation</code>; use <code>$result-&gt;isUnchanged()</code> to tell the cases apart.</div>
+
+      <h2>Everything else keeps working</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Method</th><th>1.x</th><th>2.0</th></tr></thead>
+          <tbody>
+            <tr><td><code>justTranslate()</code></td><td><code>string</code></td><td><code>string</code> — unchanged</td></tr>
+            <tr><td><code>translate()</code></td><td><code>array</code></td><td><code>Translation</code>, array-accessible</td></tr>
+            <tr><td><code>translateBatch()</code></td><td><code>array</code></td><td><code>TranslationCollection</code></td></tr>
+            <tr><td><code>detectLanguage()</code></td><td><code>array</code></td><td><code>DetectedLanguage</code>, array-accessible</td></tr>
+            <tr><td><code>detectLanguageBatch()</code></td><td><code>array</code></td><td><code>Collection</code></td></tr>
+            <tr><td><code>getAvailableTranslationsFor()</code></td><td><code>array</code></td><td><code>Collection&lt;code, name&gt;</code></td></tr>
+            <tr><td><code>sanitizeLanguageCode()</code></td><td><code>string</code></td><td><code>string</code> — and <code>zh-TW</code> now works</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="board">
+        <div class="board-h"><span class="t">still-works.php</span></div>
+        <pre><span class="var">$result</span> = <span class="fn">GoogleTranslateToolkit</span>::<span class="fn">translate</span>(<span class="str">'Hello'</span>);
+
+<span class="var">$result</span>[<span class="str">'translated_text'</span>];        <span class="cm">// as in 1.x</span>
+<span class="var">$result</span>[<span class="str">'source_language_code'</span>];   <span class="cm">// as in 1.x</span>
+<span class="var">$result</span>-&gt;translatedText;          <span class="cm">// new</span>
+(<span class="kw">string</span>) <span class="var">$result</span>;               <span class="cm">// new</span></pre>
+      </div>
+
+      <h2>Configuration</h2>
+      <p>Republish to get the new sections. The 1.x keys are still read, so an un-republished config keeps working exactly as it did.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>1.x</th><th>2.0</th></tr></thead>
+          <tbody>
+            <tr><td><code>default_source_translation</code></td><td><code>default_source</code> — now nullable, null means auto-detect</td></tr>
+            <tr><td><code>default_target_translation</code></td><td><code>default_target</code> — falls back to <code>app.locale</code></td></tr>
+            <tr><td><code>api_key</code></td><td>unchanged; <code>GOOGLE_DEVELOPER_KEY</code> still read</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Drop the SDK</h2>
+      <div class="board">
+        <div class="board-h"><span class="t">terminal</span><span class="r"><button class="copy" data-copy="composer remove google/cloud-translate">copy</button></span></div>
+        <pre><span class="cm">$</span> composer remove google/cloud-translate</pre>
+      </div>
+      <p>2.0 talks to the v2 REST endpoint through Laravel's HTTP client. If nothing else in your application needs the Google SDK, removing it takes google/cloud-core, the auth layer and the protobuf shims with it.</p>
+
+      <div class="note ok"><b>Worth adopting after the upgrade.</b> <code>'fallback_to_source' =&gt; true</code> in queued jobs and webhooks; <code>glossary.protect</code> for brand names; and the <code>HasTranslations</code> trait with <code>translate:model</code> instead of hand-written <code>*_it</code> writes.</div>
+    </section>
+
+
+    <!-- ---------- CHANGELOG ---------- -->
+    <section class="page" id="changelog" data-title="Changelog" hidden>
+      <span class="crumb">More</span>
+      <h1>What changed, <em>and when.</em></h1>
+      <p class="lead">Semantic versioning. Breaking changes only in a major, and each one explained in <a class="ln" href="#/upgrade">Upgrading</a>.</p>
+
+      <h2>2.0.0</h2>
+      <p>A full rewrite for Laravel 12 and 13. The transport is now Laravel's HTTP client; <code>google/cloud-translate</code> is no longer required.</p>
+
+      <h3>Added</h3>
+      <ul class="reqs">
+        <li><b>Fluent, immutable builder</b> — <code>from()</code>, <code>to()</code>, <code>asHtml()</code>, <code>withoutCache()</code>, <code>onFailUseSource()</code>, <code>preserving()</code>, <code>withoutGlossary()</code>, <code>deferred()</code></li>
+        <li><b>Translation cache</b> with partitioned batches, namespaced flushing and <code>translate:cache-clear</code></li>
+        <li><b>Multi-target fan-out</b> through one bounded <code>Http::pool()</code></li>
+        <li><b>Placeholder protection</b> — ten patterns masked and restored</li>
+        <li><b>Glossary</b> — protected terms and per-locale forced wording</li>
+        <li><b>Round-trip QA</b> with <code>roundTrip()</code> and <code>translate:audit</code></li>
+        <li><b>Cost control</b> — <code>estimate()</code>, a daily character budget, <code>translate:cost</code>, <code>translate:stats</code></li>
+        <li><b>Eloquent</b> — <code>HasTranslations</code>, the <code>Translatable</code> contract, <code>whereTranslationMissing()</code>, <code>translate:model</code></li>
+        <li><b>Queue support</b> — <code>TranslateAttributesJob</code>, <code>WarmTranslationCacheJob</code>, <code>warm()</code></li>
+        <li><b>Sugar</b> — <code>@translateHtml</code>, Str/Stringable/Collection macros, <code>google_translate()</code>, <code>Rule::language()</code>, the <code>AsLanguage</code> cast</li>
+        <li><b>Testing</b> — <code>GoogleTranslate::fake()</code> with six assertions</li>
+        <li><b>Types</b> — <code>Language</code> and <code>TextFormat</code> enums, typed exceptions, readonly data objects</li>
+        <li><b>Eight artisan commands</b>, replacing none (1.x had none)</li>
+      </ul>
+
+      <h3>Changed</h3>
+      <ul class="reqs">
+        <li>The API key travels in an <code>X-goog-api-key</code> header instead of the query string</li>
+        <li><code>default_source</code> may be null, which enables Google's auto-detection — 1.x always sent a source language</li>
+        <li>Methods return typed objects that still array-access with the 1.x keys</li>
+        <li><code>unlessLanguageIs()</code> always returns a <code>Translation</code></li>
+      </ul>
+
+      <h3>Fixed</h3>
+      <ul class="reqs">
+        <li><code>@translate($text, 'it')</code> passed the target language into the <b>source</b> slot</li>
+        <li><code>zh-TW</code> could not be used as the configured default target — a <code>ctype_lower</code> check rejected it</li>
+        <li>No timeout, retry or cache: every call hit the API and a single blip failed the caller</li>
+      </ul>
+
+      <h2>1.0.0</h2>
+      <p>Initial release — a thin wrapper over <code>google/cloud-translate</code> with translation, batch translation, detection and a Blade directive.</p>
+    </section>
+
+    <nav class="pager" aria-label="Guide pages">
+      <a class="pg prev" id="pg-prev" href="#"><span>&larr; Previous</span><b></b></a>
+      <a class="pg next" id="pg-next" href="#"><span>Next &rarr;</span><b></b></a>
+    </nav>
+  </main>
+
+  <!-- ================= ON THIS PAGE ================= -->
+  <aside class="rail" aria-label="On this page">
+    <b>On this page</b>
+    <div id="railLinks"></div>
+  </aside>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="fcol">
+        <h4>Documentation</h4>
+        <a href="#/install">Installation</a>
+        <a href="#/quick">Translating</a>
+        <a href="#/cache">Caching</a>
+        <a href="#/commands">Commands</a>
+      </div>
+      <div class="fcol">
+        <h4>Reference</h4>
+        <a href="#/api">Builder methods</a>
+        <a href="#/config">Language enum</a>
+        <a href="#/cache">Cost &amp; budget</a>
+        <a href="#/testing">Testing fake</a>
+      </div>
+      <div class="fcol">
+        <h4>Project</h4>
+        <a href="https://github.com/gabrielesbaiz/google-translate-toolkit">GitHub</a>
+        <a href="https://packagist.org/packages/gabrielesbaiz/google-translate-toolkit">Packagist</a>
+        <a href="#/upgrade">Upgrading from 1.x</a>
+        <a href="#/changelog">Changelog</a>
+      </div>
+      <div class="fcol">
+        <h4>Author</h4>
+        <a href="https://github.com/gabrielesbaiz">Gabriele Sbaiz</a>
+        <a href="https://github.com/sponsors/gabrielesbaiz">&#9829; Sponsor</a>
+        <a href="https://github.com/gabrielesbaiz/password-toolkit">PasswordToolkit</a>
+        <a href="https://github.com/gabrielesbaiz/nova-two-factor">Nova Two-Factor</a>
+      </div>
+    </div>
+    <div class="fbot">
+      <span>MIT licence</span>
+      <span>PHP 8.3+ &middot; Laravel 12&ndash;13</span>
+      <span>Machine translation sends your text to Google &mdash; decide whether that suits your data.</span>
+      <span class="push">&copy; 2026 Gabriele Sbaiz</span>
+    </div>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim" hidden>
+  <div class="pal" role="dialog" aria-modal="true" aria-label="Search the documentation">
+    <input id="q" type="text" placeholder="Search the documentation&hellip;" autocomplete="off" spellcheck="false"
+           role="combobox" aria-expanded="true" aria-controls="hits" aria-autocomplete="list" aria-label="Search the documentation">
+    <ul id="hits" role="listbox" aria-label="Search results"></ul>
+    <footer><span>&#8593;&#8595; move</span><span>&#8629; open</span><span>esc close</span></footer>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
