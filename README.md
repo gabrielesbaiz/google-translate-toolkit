@@ -4,7 +4,7 @@
 
 # GoogleTranslateToolkit
 
-Google Translate for Laravel — a fluent builder, a cache that means most translations never leave your server, placeholders that survive the round trip, and a price you can check before you spend it.
+Google Translate for Laravel — a fluent builder, a cache that keeps most translations from ever leaving your server, placeholders that survive the round trip, and a price you can check before you spend it.
 
 [![Latest version](https://img.shields.io/packagist/v/gabrielesbaiz/google-translate-toolkit.svg?style=flat-square)](https://packagist.org/packages/gabrielesbaiz/google-translate-toolkit)
 [![PHP](https://img.shields.io/packagist/dependency-v/gabrielesbaiz/google-translate-toolkit/php?style=flat-square)](composer.json)
@@ -22,7 +22,7 @@ and recipes for the shapes this package was built for.
 > **Upgrading from 1.x?** Read [UPGRADING.md](UPGRADING.md) first. Your calls keep
 > working and the published 1.x config is still read, but `@translate($text, 'it')`
 > used to translate **from** Italian and now translates **to** it, and
-> `unlessLanguageIs()` has a single return type. Two changes may need an edit.
+> `unlessLanguageIs()` always returns a `Translation`. Two changes need an edit.
 
 > [!IMPORTANT]
 > A ⭐ costs you nothing and helps other developers find this package.
@@ -31,16 +31,15 @@ and recipes for the shapes this package was built for.
 
 ## What it does
 
-Calling the Cloud Translation API is four endpoints' worth of work. Everything
+Calling the Cloud Translation API is three endpoints' worth of work. Everything
 hard about translating in a real application happens around that call, and that
 is what this package is:
 
 - **A cache that is the point.** Cached segments never reach the API, and a batch only sends what it has not seen before.
-- **Placeholders that come back intact.** Ten patterns are masked before the call and restored after — `:name`, `{count}`, `{{ $blade }}`, `%s`, URLs, e-mails, handles, code spans.
-- **A glossary.** Brand names that are never translated, and domain wording forced per locale.
-- **Cost you can see first.** `estimate()` prices a call before it happens, a daily character budget throws rather than bills, and `translate:stats` shows the hit rate that explains both.
-- **Failure that behaves.** Timeouts, retry with backoff, and `onFailUseSource()` so a webhook stores the original text instead of failing the job.
-- **137 languages** as a typed enum, **8 artisan commands**, an Eloquent concern, and a testing fake with assertions.
+- **Placeholders that come back intact.** Ten patterns are masked before the call and restored after: `:name`, `{count}`, `{{ $blade }}`, `%s`, URLs, e-mails, handles and code spans.
+- **A glossary**, for brand names that are never translated and domain wording forced per locale.
+- **Cost you can see first.** `estimate()` prices a call before it happens, a daily character budget throws rather than bills, and `translate:stats` reports the hit rate behind both.
+- **137 languages** as a typed enum, nine of them right to left, plus an Eloquent concern and a testing fake with assertions.
 
 Built on Laravel's own HTTP client — no Google SDK, no gRPC — so `Http::fake()`,
 `Http::pool()` and every retry helper you already know work here unchanged.
@@ -61,43 +60,30 @@ php artisan vendor:publish --tag="google-translate-toolkit-config"
 php artisan translate:text "Hello world" --to=it
 ```
 
-```dotenv
-GOOGLE_TRANSLATE_API_KEY=your-cloud-console-key
-GOOGLE_TRANSLATE_TARGET=it
-```
-
-The service provider is auto-discovered: no migrations, no tables, no published
-assets. Publishing the config is optional — the defaults translate out of the box.
+Set `GOOGLE_TRANSLATE_API_KEY` in your `.env` and the service provider does the
+rest: no migrations, no tables, no published assets. Publishing the config is
+optional — the defaults translate untouched.
 
 **[Full installation guide →](https://gabrielesbaiz.github.io/google-translate-toolkit/#/install)**
-
-## A first call
 
 ```php
 use Gabrielesbaiz\GoogleTranslateToolkit\Facades\GoogleTranslate;
 
 GoogleTranslate::justTranslate('The message bounced');
-// "Il messaggio è stato rifiutato"
-
 GoogleTranslate::from('en')->to('it')->asHtml()->text($post->body);
-
 GoogleTranslate::to(['it', 'fr', 'de'])->translate('Good morning');
-// one pooled fan-out, keyed by locale
 ```
-
-**[Quick start →](https://gabrielesbaiz.github.io/google-translate-toolkit/#/quick)**
 
 ## Artisan commands
 
 | Command | Purpose |
 |---|---|
-| `translate:text` | Translate strings from the console. `--dry-run` prices it instead. |
+| `translate:text` | Translate strings from the console. `--dry-run` prices them instead. |
 | `translate:lang` | Translate `lang/{from}` into other locales, skipping existing lines. |
 | `translate:model` | Backfill a model's translated columns, chunked or queued. |
 | `translate:cost` | Price a translation before spending a character. |
 
-Eight in all, including `translate:languages`, `translate:audit`,
-`translate:stats` and `translate:cache-clear`. See the
+Eight in all. See the
 [commands page](https://gabrielesbaiz.github.io/google-translate-toolkit/#/commands).
 
 ## Documentation
@@ -115,7 +101,7 @@ Eight in all, including `translate:languages`, `translate:audit`,
 ## Testing
 
 ```bash
-composer test        # Pest — 93 tests, no network
+composer test        # Pest — 94 tests
 composer analyse     # PHPStan level 6
 composer format      # Pint
 ```
@@ -130,18 +116,17 @@ your pull request will be read quickly.
 
 ## Security vulnerabilities
 
-Please review [our security policy](../../security/policy) on how to report a
-vulnerability. Please do not open a public issue.
+Please review [our security policy](https://github.com/gabrielesbaiz/google-translate-toolkit/security/policy)
+for reporting a vulnerability. Please do not open a public issue.
 
 ## Credits
 
 Written and maintained by [Gabriele Sbaiz](https://github.com/gabrielesbaiz).
 
 The 1.x line began as a fork of
-[JoggApp/laravel-google-translate](https://github.com/JoggApp/laravel-google-translate)
-by [Jogg](https://github.com/Jogg). 2.0 is a rewrite, and the debt is gladly
-acknowledged. Built on Laravel and
-[spatie/laravel-package-tools](https://github.com/spatie/laravel-package-tools).
+[JoggApp/laravel-google-translate](https://github.com/JoggApp/laravel-google-translate);
+2.0 is a rewrite, and the debt is gladly acknowledged. This package builds on
+Laravel and [spatie/laravel-package-tools](https://github.com/spatie/laravel-package-tools).
 
 ## Support this package
 
@@ -157,23 +142,23 @@ If it is useful to you:
 ## Disclaimer
 
 This package is provided **as is**, without warranty of any kind, express or
-implied, including but not limited to the warranties of merchantability, fitness
-for a particular purpose, title and non-infringement. To the fullest extent
-permitted by applicable law, in no event shall the authors, copyright holders or
-contributors be liable for any claim, damages or other liability — whether in an
-action of contract, tort or otherwise — arising from, out of or in connection
-with this package or its use, including without limitation any direct, indirect,
-incidental, special, exemplary, consequential or punitive damages, loss of data,
-loss of profits, business interruption, or unexpected charges from a third-party
-API.
+implied, including but not limited to the warranties of merchantability,
+fitness for a particular purpose, title and non-infringement. To the fullest
+extent permitted by applicable law, in no event shall the authors, copyright
+holders or contributors be liable for any claim, damages or other liability —
+whether in an action of contract, tort or otherwise — arising from, out of or in
+connection with this package or its use, including without limitation any
+direct, indirect, incidental, special, exemplary, consequential or punitive
+damages, loss of data, loss of profits, business interruption, or unexpected
+charges from a third-party API.
 
 This package sends your text to Google. Whoever deploys it is responsible for
 deciding whether that is acceptable for the data in question, and for meeting
-whatever regulatory, contractual or privacy obligations apply — including, and
-not limited to, personal data, confidential business information and anything
-covered by the GDPR. Machine translation is not a substitute for a professional
-translator where accuracy carries legal or safety consequences. Cost estimates
-are estimates: the authoritative figure is the one on your Google Cloud invoice.
+whatever regulatory, contractual or privacy obligations apply to it — personal
+data, confidential business information and anything covered by the GDPR among
+them. Machine translation is not a substitute for a professional translator
+where accuracy carries legal or safety consequences, and an estimate is an
+estimate: the authoritative figure is the one on your Google Cloud invoice.
 Nothing here constitutes legal, compliance or security advice.
 
 Use of this package is entirely at your own risk.
