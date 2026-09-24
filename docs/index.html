@@ -11,12 +11,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="GoogleTranslateToolkit">
 <meta property="og:title" content="GoogleTranslateToolkit — every language, on the board">
-<meta property="og:description" content="A fluent builder, a cache that means most translations never leave your server, and placeholders that survive the round trip. 137 languages, 8 artisan commands, 93 tests, zero network.">
+<meta property="og:description" content="A fluent builder, a cache that means most translations never leave your server, and placeholders that survive the round trip. 137 languages, 8 artisan commands, 94 tests, zero network.">
 <meta property="og:url" content="https://gabrielesbaiz.github.io/google-translate-toolkit/">
 <meta property="og:image" content="https://gabrielesbaiz.github.io/google-translate-toolkit/logo.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="GoogleTranslateToolkit — every language, on the board">
-<meta name="twitter:description" content="Google Translate for Laravel: fluent builder, cache-first, placeholder-safe. 137 languages, 8 artisan commands, 93 tests.">
+<meta name="twitter:description" content="Google Translate for Laravel: fluent builder, cache-first, placeholder-safe. 137 languages, 8 artisan commands, 94 tests.">
 <meta name="twitter:image" content="https://gabrielesbaiz.github.io/google-translate-toolkit/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -78,7 +78,7 @@
       </div>
 
       <div class="under">
-        <span>137 languages</span><span>0 SDK dependencies</span><span>93 tests, no network</span><span>PHPStan level 6</span>
+        <span>137 languages</span><span>0 SDK dependencies</span><span>94 tests, no network</span><span>PHPStan level 6</span>
       </div>
     </div>
   </section>
@@ -89,7 +89,7 @@
       <div class="stat"><div class="n" data-count="137">0</div><div class="l">Languages, typed</div></div>
       <div class="stat"><div class="n" data-count="94" data-suffix="%">0</div><div class="l">Typical cache hit rate</div></div>
       <div class="stat"><div class="n" data-count="8">0</div><div class="l">Artisan commands</div></div>
-      <div class="stat"><div class="n" data-count="93">0</div><div class="l">Tests, zero network</div></div>
+      <div class="stat"><div class="n" data-count="94">0</div><div class="l">Tests, zero network</div></div>
     </div>
   </div>
 
@@ -458,7 +458,7 @@
         <li>No database tables, no migrations, no published assets</li>
       </ul>
 
-      <div class="note ok"><b>93 tests, zero network.</b> The suite runs entirely on <code>Http::fake()</code> with stray requests blocked, and static analysis is clean at PHPStan level 6.</div>
+      <div class="note ok"><b>94 tests, zero network.</b> The suite runs entirely on <code>Http::fake()</code> with stray requests blocked, and static analysis is clean at PHPStan level 6.</div>
     </section>
 
     <!-- ---------- 02 INSTALL ---------- -->
@@ -809,6 +809,7 @@ GOOGLE_TRANSLATE_TARGET=<span class="str">it</span>
 <span class="cm">// Or globally, for every call</span>
 <span class="str">'fallback_to_source'</span> =&gt; <span class="kw">true</span>,</pre>
       </div>
+      <p>Text handed back by the fallback is never written to the cache. It was never translated, so storing it would serve the source language for the whole 30-day lifetime after a single bad minute. The segment stays a miss, and the next call tries again.</p>
       <div class="tablewrap">
         <table>
           <thead><tr><th>Exception</th><th>Raised when</th></tr></thead>
@@ -899,7 +900,7 @@ GOOGLE_TRANSLATE_TARGET=<span class="str">it</span>
           </tbody>
         </table>
       </div>
-      <p><code>recovered</code> is <code>true</code> when the failure was absorbed by <code>onFailUseSource()</code> — useful for a log line that distinguishes "degraded" from "broken".</p>
+      <p><code>recovered</code> is <code>true</code> when the failure was absorbed by <code>onFailUseSource()</code> — useful for a log line that distinguishes "degraded" from "broken". A recovered result is not cached, so the next call retries rather than serving the source text for the rest of the TTL.</p>
     </section>
 
     <!-- ---------- ALL METHODS ---------- -->
@@ -1168,7 +1169,7 @@ GOOGLE_TRANSLATE_TARGET=<span class="str">it</span>
     &amp;&amp; <span class="var">$request</span>-&gt;<span class="fn">hasHeader</span>(<span class="str">'X-goog-api-key'</span>)
 );</pre>
       </div>
-      <div class="note ok"><b>Block strays.</b> Add <code>Http::preventStrayRequests()</code> to your <code>TestCase</code> and any forgotten fake becomes a failing test instead of a live API call. That is how this package's own 93 tests are written.</div>
+      <div class="note ok"><b>Block strays.</b> Add <code>Http::preventStrayRequests()</code> to your <code>TestCase</code> and any forgotten fake becomes a failing test instead of a live API call. That is how this package's own 94 tests are written.</div>
 
       <div class="note warn"><b>Watch the cache in tests.</b> Caching is on by default, so a second identical call inside one test will not hit your fake. Either assert the count you actually expect, or disable it: <code>config()-&gt;set('google-translate-toolkit.cache.enabled', false)</code>.</div>
     </section>
@@ -1283,7 +1284,7 @@ GOOGLE_TRANSLATE_TARGET=<span class="str">it</span>
             <tr><td>Languages in the enum</td><td>137, nine of them right to left</td></tr>
             <tr><td>Protected placeholder patterns</td><td>10, extendable</td></tr>
             <tr><td>Artisan commands</td><td>8</td></tr>
-            <tr><td>Tests</td><td class="g">93, none of them touching the network</td></tr>
+            <tr><td>Tests</td><td class="g">94, 192 assertions, none of them touching the network</td></tr>
             <tr><td>Static analysis</td><td class="g">PHPStan level 6, clean</td></tr>
             <tr><td>Runtime dependencies</td><td>Laravel only — no Google SDK</td></tr>
           </tbody>
@@ -1407,6 +1408,7 @@ GOOGLE_TRANSLATE_TARGET=<span class="str">it</span>
         <li><code>@translate($text, 'it')</code> passed the target language into the <b>source</b> slot</li>
         <li><code>zh-TW</code> could not be used as the configured default target — a <code>ctype_lower</code> check rejected it</li>
         <li>No timeout, retry or cache: every call hit the API and a single blip failed the caller</li>
+        <li>Text returned by the source fallback was written to the cache as though it were a translation, so one outage served the source language for the whole cache lifetime</li>
       </ul>
 
       <h2>1.0.0</h2>

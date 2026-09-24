@@ -41,6 +41,8 @@ Full rewrite for Laravel 12/13 and PHP 8.3+.
 - `@translate($text, 'it')` passed the target language into the source slot in 1.x
 - `zh-TW` could not be used as the configured default target (`ctype_lower` check)
 - No timeout, retry or cache meant every call hit the API and a single blip failed the caller
+- Text returned by the source fallback was cached as though it were a translation, so one outage served
+  the source language for the whole cache lifetime
 
 ## 1.0.0
 
