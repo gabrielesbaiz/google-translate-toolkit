@@ -56,3 +56,16 @@ it('invalidates everything it cached when flushed', function () {
 
     Http::assertSentCount(2);
 });
+
+it('never caches text handed back by the fallback', function () {
+    Http::fake(['*' => Http::response(['error' => ['message' => 'boom']], 500)]);
+
+    expect(GoogleTranslateToolkit::onFailUseSource()->text('hi'))->toBe('hi');
+
+    Http::assertSentCount(1);
+
+    fakeTranslations(['ciao']);
+
+    // The failure must not have poisoned the cache with the source text.
+    expect(GoogleTranslateToolkit::justTranslate('hi'))->toBe('ciao');
+});
