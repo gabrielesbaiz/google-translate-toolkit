@@ -29,11 +29,11 @@ it('protects laravel placeholders', function () {
 it('protects curly placeholders, urls and emails', function () {
     fakeEcho(fn (string $text) => strtoupper($text));
 
-    $result = GoogleTranslateToolkit::justTranslate('see {count} at https://novias.it or mail me@novias.it');
+    $result = GoogleTranslateToolkit::justTranslate('see {count} at https://example.com or mail me@example.com');
 
     expect($result)->toContain('{count}')
-        ->and($result)->toContain('https://novias.it')
-        ->and($result)->toContain('me@novias.it');
+        ->and($result)->toContain('https://example.com')
+        ->and($result)->toContain('me@example.com');
 });
 
 it('never sends the raw placeholder to the api', function () {
@@ -53,11 +53,11 @@ it('can be told to skip placeholder protection', function () {
 });
 
 it('keeps glossary terms untranslated', function () {
-    config()->set('google-translate-toolkit.glossary.protect', ['Novias']);
+    config()->set('google-translate-toolkit.glossary.protect', ['Acme']);
 
-    fakeEcho(fn (string $text) => str_replace(['Novias', 'sent'], ['Sposa', 'inviato'], $text));
+    fakeEcho(fn (string $text) => str_replace(['Acme', 'sent'], ['Cima', 'inviato'], $text));
 
-    expect(GoogleTranslateToolkit::justTranslate('Novias sent'))->toBe('Novias inviato');
+    expect(GoogleTranslateToolkit::justTranslate('Acme sent'))->toBe('Acme inviato');
 });
 
 it('applies forced glossary wording after translating', function () {
