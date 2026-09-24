@@ -9,29 +9,41 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
 /**
- * Reading and writing lang/{locale}/*.php and lang/{locale}.json.
+ * Reads and writes the lang/{locale}/*.php and lang/{locale}.json files.
  */
 final class LangFiles
 {
+    /**
+     * Create a new lang files instance.
+     */
     public function __construct(private readonly string $basePath) {}
 
+    /**
+     * Create a new lang files instance for the application lang path.
+     */
     public static function make(?string $basePath = null): self
     {
         return new self($basePath ?? (function_exists('lang_path') ? lang_path() : base_path('lang')));
     }
 
+    /**
+     * Get the path to the given lang file parts.
+     */
     public function path(string ...$parts): string
     {
         return rtrim($this->basePath, '/').'/'.implode('/', $parts);
     }
 
+    /**
+     * Determine if any lang file exists for the given locale.
+     */
     public function exists(string $locale): bool
     {
         return File::isDirectory($this->path($locale)) || File::exists($this->path($locale.'.json'));
     }
 
     /**
-     * Every group ("auth", "validation", "__json") mapped to its flattened lines.
+     * Get every group of the given locale mapped to its flattened lines.
      *
      * @return Collection<string, array<string, string>>
      */
@@ -60,7 +72,11 @@ final class LangFiles
         return $groups;
     }
 
-    /** @param array<string, string> $lines */
+    /**
+     * Write the given lines to the lang file for the locale and group.
+     *
+     * @param  array<string, string>  $lines
+     */
     public function write(string $locale, string $group, array $lines): string
     {
         if ($group === '__json') {
@@ -81,6 +97,8 @@ final class LangFiles
     }
 
     /**
+     * Flatten the given lines into dot notation, keeping only the strings.
+     *
      * @param  array<string, mixed>  $lines
      * @return array<string, string>
      */
@@ -92,7 +110,11 @@ final class LangFiles
             ->all();
     }
 
-    /** @param array<array-key, mixed> $value */
+    /**
+     * Export the given array as the PHP source of a lang file.
+     *
+     * @param  array<array-key, mixed>  $value
+     */
     private function export(array $value, int $depth = 1): string
     {
         $indent = str_repeat('    ', $depth);

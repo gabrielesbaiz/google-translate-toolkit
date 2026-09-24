@@ -15,7 +15,8 @@ uses(TestCase::class)->in(__DIR__);
  */
 function fakeTranslations(array $translations, ?string $detected = null): void
 {
-    // Http::fake() merges stubs; reset them so a later call in the same test wins.
+    // Http::fake() merges its stubs, so here we will reset them first and let a
+    // later call within the same test replace the responses of an earlier one.
     Closure::bind(function (): void {
         $this->stubCallbacks = collect();
     }, app(Factory::class), Factory::class)();

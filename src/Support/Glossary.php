@@ -7,14 +7,17 @@ namespace Gabrielesbaiz\GoogleTranslateToolkit\Support;
 use Illuminate\Support\Str;
 
 /**
- * Brand names that must survive untranslated, plus forced domain wording per locale.
+ * Shields brand names from translation and forces domain wording per locale.
  */
 final class Glossary
 {
+    /**
+     * Create a new glossary instance.
+     */
     public function __construct(private readonly Config $config) {}
 
     /**
-     * Regular expressions for every protected term, ready for the masker.
+     * Get a regular expression for every protected term.
      *
      * @return array<int, string>
      */
@@ -27,7 +30,7 @@ final class Glossary
     }
 
     /**
-     * Apply the locale overrides to a translated string, preserving capitalisation.
+     * Apply the glossary overrides for the given locale to a translated string.
      */
     public function apply(string $translated, string $locale): string
     {
@@ -42,6 +45,9 @@ final class Glossary
         return $translated;
     }
 
+    /**
+     * Give the replacement the same capitalization as the term it replaces.
+     */
     private function matchCase(string $original, string $replacement): string
     {
         if (Str::upper($original) === $original && Str::length($original) > 1) {

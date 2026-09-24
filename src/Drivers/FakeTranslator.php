@@ -11,23 +11,39 @@ use Illuminate\Support\Collection;
 use PHPUnit\Framework\Assert as PHPUnit;
 
 /**
- * Deterministic in-memory translator for tests: no HTTP, full recording.
+ * A deterministic in-memory translator that records every call made against it.
  */
 final class FakeTranslator implements Translator
 {
-    /** @var array<int, array{texts: array<int, string>, source: ?string, target: string, format: string}> */
+    /**
+     * The translation calls that have been recorded.
+     *
+     * @var array<int, array{texts: array<int, string>, source: ?string, target: string, format: string}>
+     */
     private array $translations = [];
 
-    /** @var array<int, array<int, string>> */
+    /**
+     * The detection calls that have been recorded.
+     *
+     * @var array<int, array<int, string>>
+     */
     private array $detections = [];
 
-    /** @param array<string, string|array<string, string>|Closure> $stubs */
+    /**
+     * Create a new fake translator instance.
+     *
+     * @param  array<string, string|array<string, string>|Closure>  $stubs
+     */
     public function __construct(
         private array $stubs = [],
         private string $detectedLanguage = 'en',
     ) {}
 
-    /** @param array<string, string|array<string, string>|Closure> $stubs */
+    /**
+     * Register additional stubbed translations.
+     *
+     * @param  array<string, string|array<string, string>|Closure>  $stubs
+     */
     public function stub(array $stubs): self
     {
         $this->stubs = [...$this->stubs, ...$stubs];
@@ -35,6 +51,9 @@ final class FakeTranslator implements Translator
         return $this;
     }
 
+    /**
+     * Set the language every detection should report.
+     */
     public function detectAs(string $language): self
     {
         $this->detectedLanguage = $language;
@@ -42,11 +61,17 @@ final class FakeTranslator implements Translator
         return $this;
     }
 
+    /**
+     * Translate the given segments into the target language.
+     */
     public function translate(array $texts, ?string $source, string $target, TextFormat $format): array
     {
         return $this->translateMany($texts, $source, [$target], $format)[$target] ?? [];
     }
 
+    /**
+     * Translate the given segments into several target languages at once.
+     */
     public function translateMany(array $texts, ?string $source, array $targets, TextFormat $format): array
     {
         $results = [];
@@ -70,6 +95,9 @@ final class FakeTranslator implements Translator
         return $results;
     }
 
+    /**
+     * Detect the language of the given segments.
+     */
     public function detect(array $texts): array
     {
         $this->detections[] = array_values($texts);
@@ -81,6 +109,9 @@ final class FakeTranslator implements Translator
         ], $texts);
     }
 
+    /**
+     * Get the languages the driver can translate, named in the given display language.
+     */
     public function languages(string $displayLanguage): array
     {
         return [
@@ -90,24 +121,39 @@ final class FakeTranslator implements Translator
         ];
     }
 
-    /** @return Collection<int, array{texts: array<int, string>, source: ?string, target: string, format: string}> */
+    /**
+     * Get the translation calls that have been recorded.
+     *
+     * @return Collection<int, array{texts: array<int, string>, source: ?string, target: string, format: string}>
+     */
     public function recorded(): Collection
     {
         return collect($this->translations);
     }
 
-    /** @return Collection<int, array<int, string>> */
+    /**
+     * Get the detection calls that have been recorded.
+     *
+     * @return Collection<int, array<int, string>>
+     */
     public function recordedDetections(): Collection
     {
         return collect($this->detections);
     }
 
-    /** @return Collection<int, string> */
+    /**
+     * Get every segment that has been sent for translation.
+     *
+     * @return Collection<int, string>
+     */
     public function translatedTexts(): Collection
     {
         return $this->recorded()->flatMap(fn (array $call) => $call['texts'])->values();
     }
 
+    /**
+     * Assert the given text was translated.
+     */
     public function assertTranslated(string|Closure $text, ?string $target = null): self
     {
         $matches = $this->recorded()->filter(function (array $call) use ($text, $target): bool {
@@ -128,6 +174,9 @@ final class FakeTranslator implements Translator
         return $this;
     }
 
+    /**
+     * Assert the given text was never translated.
+     */
     public function assertNotTranslated(string $text): self
     {
         PHPUnit::assertFalse(
@@ -138,6 +187,9 @@ final class FakeTranslator implements Translator
         return $this;
     }
 
+    /**
+     * Assert no translation was performed.
+     */
     public function assertNothingTranslated(): self
     {
         PHPUnit::assertEmpty($this->translations, 'Unexpected translations were performed.');
@@ -145,6 +197,9 @@ final class FakeTranslator implements Translator
         return $this;
     }
 
+    /**
+     * Assert the given number of translation calls were made.
+     */
     public function assertTranslatedCount(int $count): self
     {
         PHPUnit::assertCount($count, $this->translations, 'Unexpected number of translation calls.');
@@ -152,6 +207,9 @@ final class FakeTranslator implements Translator
         return $this;
     }
 
+    /**
+     * Assert something was translated into the given language.
+     */
     public function assertTranslatedTo(string $target): self
     {
         PHPUnit::assertTrue(
@@ -162,6 +220,9 @@ final class FakeTranslator implements Translator
         return $this;
     }
 
+    /**
+     * Assert a language detection was performed, optionally for the given text.
+     */
     public function assertDetected(?string $text = null): self
     {
         PHPUnit::assertNotEmpty($this->detections, 'No language detection was performed.');
@@ -176,6 +237,9 @@ final class FakeTranslator implements Translator
         return $this;
     }
 
+    /**
+     * Resolve the stubbed translation for the given segment.
+     */
     private function resolve(string $text, string $target): string
     {
         $stub = $this->stubs[$text] ?? null;
@@ -191,6 +255,9 @@ final class FakeTranslator implements Translator
         return is_string($stub) ? $stub : $this->placeholder($text, $target);
     }
 
+    /**
+     * Build the stand-in translation used when no stub matches.
+     */
     private function placeholder(string $text, string $target): string
     {
         return sprintf('[%s] %s', $target, $text);

@@ -11,7 +11,11 @@ class TranslationFailed
 {
     use Dispatchable;
 
-    /** @param array<int, string> $texts */
+    /**
+     * Create a new event instance.
+     *
+     * @param  array<int, string>  $texts
+     */
     public function __construct(
         public readonly Throwable $exception,
         public readonly array $texts,

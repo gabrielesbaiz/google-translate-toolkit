@@ -21,7 +21,11 @@ class TranslateAttributesJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    /** @param array<int, string>|null $attributes */
+    /**
+     * Create a new job instance.
+     *
+     * @param  array<int, string>|null  $attributes
+     */
     public function __construct(
         public readonly Model $model,
         public readonly ?string $target = null,
@@ -30,6 +34,9 @@ class TranslateAttributesJob implements ShouldQueue
         public readonly bool $overwrite = false,
     ) {}
 
+    /**
+     * Execute the job.
+     */
     public function handle(): void
     {
         $model = $this->model;
@@ -46,6 +53,9 @@ class TranslateAttributesJob implements ShouldQueue
         )->save();
     }
 
+    /**
+     * Get the unique ID for the job.
+     */
     public function uniqueId(): string
     {
         return implode(':', [$this->model::class, (string) $this->model->getKey(), (string) $this->target]);

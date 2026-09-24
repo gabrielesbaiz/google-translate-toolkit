@@ -9,9 +9,16 @@ namespace Gabrielesbaiz\GoogleTranslateToolkit\Support;
  */
 final readonly class MaskedText
 {
-    /** @param array<string, string> $map sentinel => original token */
+    /**
+     * Create a new masked text instance.
+     *
+     * @param  array<string, string>  $map  the sentinels keyed to the tokens they replaced
+     */
     public function __construct(public string $text, public array $map = []) {}
 
+    /**
+     * Determine if anything was masked.
+     */
     public function isMasked(): bool
     {
         return $this->map !== [];

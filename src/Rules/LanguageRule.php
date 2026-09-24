@@ -10,15 +10,26 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class LanguageRule implements ValidationRule
 {
-    /** @param array<int, string> $only */
+    /**
+     * Create a new rule instance.
+     *
+     * @param  array<int, string>  $only
+     */
     public function __construct(private readonly array $only = []) {}
 
-    /** @param array<int, string> $only */
+    /**
+     * Create a new rule instance.
+     *
+     * @param  array<int, string>  $only
+     */
     public static function make(array $only = []): self
     {
         return new self($only);
     }
 
+    /**
+     * Run the validation rule.
+     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! is_string($value) || Language::tryFromCode($value) === null) {

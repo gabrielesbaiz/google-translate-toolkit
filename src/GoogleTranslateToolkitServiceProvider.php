@@ -35,6 +35,9 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class GoogleTranslateToolkitServiceProvider extends PackageServiceProvider
 {
+    /**
+     * Configure the package.
+     */
     public function configurePackage(Package $package): void
     {
         $package
@@ -52,6 +55,9 @@ class GoogleTranslateToolkitServiceProvider extends PackageServiceProvider
             ]);
     }
 
+    /**
+     * Register the package services.
+     */
     public function packageRegistered(): void
     {
         $this->app->singleton(Config::class, fn ($app) => new Config($app['config']));
@@ -70,6 +76,9 @@ class GoogleTranslateToolkitServiceProvider extends PackageServiceProvider
         $this->app->alias(GoogleTranslateToolkit::class, 'google-translate');
     }
 
+    /**
+     * Bootstrap the package services.
+     */
     public function packageBooted(): void
     {
         $this->registerBladeDirectives();
@@ -77,21 +86,27 @@ class GoogleTranslateToolkitServiceProvider extends PackageServiceProvider
         $this->registerMiddleware();
     }
 
+    /**
+     * Register the package Blade directives.
+     */
     protected function registerBladeDirectives(): void
     {
-        // @translate($text), @translate($text, 'it'), @translate($text, 'it', 'en')
+        // The text comes first, then the optional target and source languages.
         Blade::directive(
             'translate',
             fn (string $expression): string => "<?php echo e(app('google-translate-toolkit')->blade({$expression})); ?>",
         );
 
-        // Same, for markup: entities are kept and the output is not escaped.
+        // The same directive for markup, whose output is left unescaped.
         Blade::directive(
             'translateHtml',
             fn (string $expression): string => "<?php echo app('google-translate-toolkit')->bladeHtml({$expression}); ?>",
         );
     }
 
+    /**
+     * Register the package macros on the framework classes.
+     */
     protected function registerMacros(): void
     {
         if (! Str::hasMacro('translate')) {
@@ -131,6 +146,9 @@ class GoogleTranslateToolkitServiceProvider extends PackageServiceProvider
         }
     }
 
+    /**
+     * Register the package middleware alias.
+     */
     protected function registerMiddleware(): void
     {
         if (! $this->app->bound(Router::class)) {

@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 final class Similarity
 {
     /**
-     * 0 (unrelated) to 1 (identical), blending character overlap and edit distance.
+     * Score how alike two strings are, from 0 (unrelated) to 1 (identical).
      */
     public static function score(string $first, string $second): float
     {
@@ -34,6 +34,9 @@ final class Similarity
         return round(min(1.0, (($percent / 100) + (1 - min(1, $distance / $longest))) / 2), 4);
     }
 
+    /**
+     * Normalize a string so only its wording is compared.
+     */
     private static function normalize(string $value): string
     {
         return Str::lower(trim((string) preg_replace('/\s+/u', ' ', $value)));

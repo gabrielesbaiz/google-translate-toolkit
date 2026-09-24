@@ -13,18 +13,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 /**
- * Mirrors a column into a sibling column per locale: "body" -> "body_it".
- *
- * Pair it with the Translatable contract on your model:
- * `class Message extends Model implements Translatable { use HasTranslations; }`
+ * Mirrors a column into a sibling column per locale, so "body" translated into
+ * Italian is written to "body_it". Pair it with the Translatable contract.
  *
  * @mixin \Illuminate\Database\Eloquent\Model
  */
 trait HasTranslations
 {
     /**
-     * The columns to mirror. Override this on the model:
-     * `public function translatableAttributes(): array { return ['body']; }`
+     * Get the attributes that should be translated.
      *
      * @return array<int, string>
      */
@@ -33,6 +30,9 @@ trait HasTranslations
         return [];
     }
 
+    /**
+     * Get the name of the column holding the translation of the given attribute.
+     */
     public function translatedAttributeName(string $attribute, Language|string|null $locale = null): string
     {
         $locale = Language::normalize($locale ?? app(Config::class)->defaultTarget());
@@ -46,6 +46,9 @@ trait HasTranslations
         return $attribute.$suffix;
     }
 
+    /**
+     * Get the translated value of the given attribute.
+     */
     public function getTranslatedAttribute(string $attribute, Language|string|null $locale = null): ?string
     {
         $column = $this->translatedAttributeName($attribute, $locale);
@@ -54,7 +57,7 @@ trait HasTranslations
     }
 
     /**
-     * Fill the "<attribute>_<locale>" columns. Does not save.
+     * Translate the given attributes into their sibling columns without saving.
      *
      * @param  array<int, string>|null  $attributes
      */
@@ -104,6 +107,8 @@ trait HasTranslations
     }
 
     /**
+     * Queue the translation of the given attributes.
+     *
      * @param  array<int, string>|null  $attributes
      */
     public function queueTranslateAttributes(
@@ -132,7 +137,7 @@ trait HasTranslations
     }
 
     /**
-     * Rows whose translated column is still empty while the source column has content.
+     * Scope the query to rows whose source column has content but whose translation is empty.
      *
      * @param  Builder<covariant \Illuminate\Database\Eloquent\Model>  $query
      * @return Builder<covariant \Illuminate\Database\Eloquent\Model>

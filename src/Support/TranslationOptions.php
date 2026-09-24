@@ -9,6 +9,8 @@ use Gabrielesbaiz\GoogleTranslateToolkit\Enums\TextFormat;
 final readonly class TranslationOptions
 {
     /**
+     * Create a new translation options instance.
+     *
      * @param  array<int, string>  $targets
      * @param  array<int, string>  $patterns
      */
@@ -25,17 +27,27 @@ final readonly class TranslationOptions
         public bool $deferred = false,
     ) {}
 
+    /**
+     * Get the first target language.
+     */
     public function target(): string
     {
         return $this->targets[0] ?? '';
     }
 
+    /**
+     * Determine if more than one target language was requested.
+     */
     public function isMultiTarget(): bool
     {
         return count($this->targets) > 1;
     }
 
-    /** @param array<string, mixed> $overrides */
+    /**
+     * Create a copy of the options with the given values replaced.
+     *
+     * @param  array<string, mixed>  $overrides
+     */
     public function with(array $overrides): self
     {
         return new self(

@@ -10,25 +10,37 @@ use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Contracts\Cache\Repository;
 
 /**
- * Cached segments never reach the API, which is the single biggest cost saver here.
+ * Stores translated segments so repeated translations never reach the API.
  */
 final class TranslationCache
 {
+    /**
+     * Create a new translation cache instance.
+     */
     public function __construct(
         private readonly Config $config,
         private readonly CacheFactory $cache,
     ) {}
 
+    /**
+     * Determine if translations should be cached.
+     */
     public function enabled(): bool
     {
         return $this->config->cacheEnabled();
     }
 
+    /**
+     * Get the cache store translations are written to.
+     */
     public function store(): Repository
     {
         return $this->cache->store($this->config->cacheStore());
     }
 
+    /**
+     * Get the cache key for the given segment.
+     */
     public function key(string $text, ?string $source, string $target, TextFormat $format): string
     {
         return sprintf(
@@ -39,6 +51,9 @@ final class TranslationCache
         );
     }
 
+    /**
+     * Get the cached translation of the given segment.
+     */
     public function get(string $text, ?string $source, string $target, TextFormat $format): ?string
     {
         if (! $this->enabled()) {
@@ -50,6 +65,9 @@ final class TranslationCache
         return is_string($cached) ? $cached : null;
     }
 
+    /**
+     * Cache the translation of the given segment.
+     */
     public function put(string $text, string $translated, ?string $source, string $target, TextFormat $format, ?int $ttl = null): void
     {
         if (! $this->enabled()) {
@@ -64,8 +82,10 @@ final class TranslationCache
     }
 
     /**
-     * Split a batch into cache hits and misses, keeping the original indexes so
-     * the caller can merge the API results back in order.
+     * Split a batch into cache hits and misses.
+     *
+     * The original indexes are kept on both sides so the caller can merge the
+     * API results back into the batch in order.
      *
      * @param  array<int, string>  $texts
      * @return array{hits: array<int, string>, misses: array<int, string>}
@@ -95,7 +115,7 @@ final class TranslationCache
     }
 
     /**
-     * Stale-while-revalidate when the store supports it, plain remember otherwise.
+     * Get the cached value for the key, resolving it through the callback when it is missing.
      *
      * @template TValue
      *
@@ -121,7 +141,7 @@ final class TranslationCache
     }
 
     /**
-     * Invalidate everything this package cached without touching the rest of the store.
+     * Flush every translation this package cached, leaving the rest of the store alone.
      */
     public function flush(): int
     {
@@ -132,11 +152,17 @@ final class TranslationCache
         return $version;
     }
 
+    /**
+     * Get the current version of the cache namespace.
+     */
     private function version(): int
     {
         return (int) $this->cache->store($this->config->cacheStore())->get($this->versionKey(), 1);
     }
 
+    /**
+     * Get the cache key holding the namespace version.
+     */
     private function versionKey(): string
     {
         return $this->config->cachePrefix().':version';

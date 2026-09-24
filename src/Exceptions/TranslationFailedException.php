@@ -9,6 +9,9 @@ use Throwable;
 
 class TranslationFailedException extends GoogleTranslateException
 {
+    /**
+     * Create a new exception from the given API response.
+     */
     public static function fromResponse(Response $response): self
     {
         $error = $response->json('error', []);
@@ -20,11 +23,17 @@ class TranslationFailedException extends GoogleTranslateException
         ), $response->status());
     }
 
+    /**
+     * Create a new exception from the given transport error.
+     */
     public static function fromThrowable(Throwable $previous): self
     {
         return new self('Google Translate API request failed: '.$previous->getMessage(), (int) $previous->getCode(), $previous);
     }
 
+    /**
+     * Create a new exception for a response that could not be understood.
+     */
     public static function malformedResponse(): self
     {
         return new self('Google Translate API returned a malformed response.');

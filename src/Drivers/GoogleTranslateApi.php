@@ -20,10 +20,13 @@ use Illuminate\Http\Client\Response;
 use Throwable;
 
 /**
- * Cloud Translation v2 over Laravel's HTTP client: no SDK, no gRPC, fully fakeable.
+ * Talks to the Cloud Translation v2 endpoint over Laravel's HTTP client.
  */
 final class GoogleTranslateApi implements Translator
 {
+    /**
+     * Create a new Google Translate driver instance.
+     */
     public function __construct(
         private readonly HttpFactory $http,
         private readonly Config $config,
@@ -32,6 +35,8 @@ final class GoogleTranslateApi implements Translator
     ) {}
 
     /**
+     * Translate the given segments into the target language.
+     *
      * @param  array<array-key, string>  $texts
      * @return array<array-key, array{text: string, detectedSourceLanguage: string|null}>
      */
@@ -41,6 +46,8 @@ final class GoogleTranslateApi implements Translator
     }
 
     /**
+     * Translate the given segments into several target languages at once.
+     *
      * @param  array<array-key, string>  $texts
      * @param  array<int, string>  $targets
      * @return array<string, array<array-key, array{text: string, detectedSourceLanguage: string|null}>>
@@ -96,6 +103,8 @@ final class GoogleTranslateApi implements Translator
     }
 
     /**
+     * Detect the language of the given segments.
+     *
      * @param  array<array-key, string>  $texts
      * @return array<array-key, array{language: string, confidence: float, reliable: bool}>
      */
@@ -125,7 +134,7 @@ final class GoogleTranslateApi implements Translator
             $keys = array_keys($job['chunk']);
 
             foreach (array_values($detections) as $position => $detection) {
-                // Each entry is a list of candidates, best first.
+                // Google returns a list of candidates for each segment, best first.
                 $candidates = is_array($detection) ? $detection : [];
                 $best = is_array($candidates[0] ?? null) ? $candidates[0] : $candidates;
 
@@ -143,6 +152,8 @@ final class GoogleTranslateApi implements Translator
     }
 
     /**
+     * Get the languages Google can translate, named in the given display language.
+     *
      * @return array<int, array{code: string, name: string}>
      */
     public function languages(string $displayLanguage): array
@@ -163,7 +174,7 @@ final class GoogleTranslateApi implements Translator
     }
 
     /**
-     * Send one job directly, or several concurrently through a bounded pool.
+     * Send a single job directly, or several concurrently through a bounded pool.
      *
      * @param  array<string, array{target: string, chunk: array<array-key, string>}>  $jobs
      * @param  callable(PendingRequest|Pool, array{target: string, chunk: array<array-key, string>}): mixed  $callback
@@ -209,12 +220,17 @@ final class GoogleTranslateApi implements Translator
         return $responses;
     }
 
+    /**
+     * Create a new configured request.
+     */
     private function request(): PendingRequest
     {
         return $this->configure($this->http->asJson());
     }
 
     /**
+     * Apply the configured credentials, timeouts and retries to a request.
+     *
      * @template TRequest of PendingRequest|Pool
      *
      * @param  TRequest  $request
@@ -242,6 +258,9 @@ final class GoogleTranslateApi implements Translator
             );
     }
 
+    /**
+     * Determine if the given failure is worth retrying.
+     */
     private function shouldRetry(Throwable $exception): bool
     {
         if ($exception instanceof ConnectionException) {
@@ -256,6 +275,8 @@ final class GoogleTranslateApi implements Translator
     }
 
     /**
+     * Get the given key out of a successful API response.
+     *
      * @return array<int, mixed>
      */
     private function payload(Response $response, string $key): array
@@ -273,12 +294,18 @@ final class GoogleTranslateApi implements Translator
         return $data;
     }
 
+    /**
+     * Decode the translated text returned by the API.
+     */
     private function decode(string $text, TextFormat $format): string
     {
         // Google returns HTML entities even for plain text payloads.
         return $format->isHtml() ? $text : html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
+    /**
+     * Get the configured API key.
+     */
     private function apiKey(): string
     {
         return $this->config->apiKey() ?? throw MissingApiKeyException::make();

@@ -12,6 +12,11 @@ use Illuminate\Support\Collection;
 
 class TranslateModelCommand extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'translate:model
         {model : Fully qualified model class}
         {--to= : Target locale (defaults to the configured one)}
@@ -22,8 +27,16 @@ class TranslateModelCommand extends Command
         {--queue : Dispatch a job per row instead of translating inline}
         {--overwrite : Retranslate rows that already have a value}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Backfill the translated columns of a model that uses HasTranslations';
 
+    /**
+     * Execute the console command.
+     */
     public function handle(): int
     {
         /** @var class-string<Model> $class */
@@ -103,6 +116,8 @@ class TranslateModelCommand extends Command
     }
 
     /**
+     * Build the query for the rows that still need translating.
+     *
      * @param  array<int, string>  $attributes
      * @return Builder<Model>
      */

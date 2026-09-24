@@ -13,13 +13,21 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AsLanguage implements CastsAttributes
 {
-    /** @param array<string, mixed> $attributes */
+    /**
+     * Cast the given value.
+     *
+     * @param  array<string, mixed>  $attributes
+     */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Language
     {
         return $value === null ? null : Language::tryFromCode((string) $value);
     }
 
-    /** @param array<string, mixed> $attributes */
+    /**
+     * Prepare the given value for storage.
+     *
+     * @param  array<string, mixed>  $attributes
+     */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {
         if ($value === null) {

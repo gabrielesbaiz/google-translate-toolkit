@@ -11,6 +11,9 @@ enum TextFormat: string
     case Text = 'text';
     case Html = 'html';
 
+    /**
+     * Resolve the given value to a text format, falling back to the default.
+     */
     public static function make(self|string|null $format, self $default = self::Text): self
     {
         if ($format instanceof self) {
@@ -24,6 +27,9 @@ enum TextFormat: string
         return self::tryFrom(mb_strtolower(trim($format))) ?? throw InvalidFormatException::make($format);
     }
 
+    /**
+     * Determine if the format is HTML.
+     */
     public function isHtml(): bool
     {
         return $this === self::Html;

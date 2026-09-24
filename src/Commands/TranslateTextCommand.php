@@ -10,6 +10,11 @@ use Illuminate\Console\Command;
 
 class TranslateTextCommand extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'translate:text
         {text* : One or more strings to translate}
         {--from= : Source language code (auto-detected when omitted)}
@@ -19,8 +24,16 @@ class TranslateTextCommand extends Command
         {--dry-run : Only report what the call would cost}
         {--json : Output raw JSON}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Translate text with the Google Translate API';
 
+    /**
+     * Execute the console command.
+     */
     public function handle(GoogleTranslateToolkit $toolkit): int
     {
         /** @var array<int, string> $texts */

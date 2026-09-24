@@ -26,14 +26,17 @@ use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 
 /**
- * Immutable fluent builder. Every modifier returns a new instance, so a
- * configured builder can be shared safely.
+ * An immutable builder for a translation. Every modifier returns a new
+ * instance, so a configured builder may be shared safely.
  */
 final class PendingTranslation
 {
     use Conditionable;
     use Macroable;
 
+    /**
+     * Create a new pending translation instance.
+     */
     public function __construct(
         private readonly TranslationRunner $runner,
         private readonly Config $config,
@@ -41,18 +44,24 @@ final class PendingTranslation
         private TranslationOptions $options,
     ) {}
 
+    /**
+     * Get the options configured so far.
+     */
     public function options(): TranslationOptions
     {
         return $this->options;
     }
 
+    /**
+     * Set the source language.
+     */
     public function from(Language|string|null $language): self
     {
         return $this->tap(['source' => $language === null ? null : Language::normalize($language)]);
     }
 
     /**
-     * Auto-detect the source language (the default, and the cheapest option).
+     * Let Google detect the source language, which is the default.
      */
     public function detectSource(): self
     {
@@ -60,6 +69,8 @@ final class PendingTranslation
     }
 
     /**
+     * Set the target languages.
+     *
      * @param  Language|string|iterable<int, Language|string>  $language
      */
     public function to(Language|string|iterable $language): self
@@ -73,26 +84,41 @@ final class PendingTranslation
         return $this->tap(['targets' => $targets]);
     }
 
+    /**
+     * Set the text format.
+     */
     public function format(TextFormat|string $format): self
     {
         return $this->tap(['format' => TextFormat::make($format)]);
     }
 
+    /**
+     * Translate as HTML, leaving the markup intact.
+     */
     public function asHtml(): self
     {
         return $this->format(TextFormat::Html);
     }
 
+    /**
+     * Translate as plain text.
+     */
     public function asText(): self
     {
         return $this->format(TextFormat::Text);
     }
 
+    /**
+     * Cache the translations, optionally for the given number of seconds.
+     */
     public function withCache(?int $ttl = null): self
     {
         return $this->tap(['cache' => true, 'cacheTtl' => $ttl]);
     }
 
+    /**
+     * Bypass the translation cache.
+     */
     public function withoutCache(): self
     {
         return $this->tap(['cache' => false]);
@@ -106,12 +132,17 @@ final class PendingTranslation
         return $this->tap(['fallbackToSource' => $fallback]);
     }
 
+    /**
+     * Throw when the API fails.
+     */
     public function onFailThrow(): self
     {
         return $this->tap(['fallbackToSource' => false]);
     }
 
     /**
+     * Shield the given patterns from translation, alongside the built-in ones.
+     *
      * @param  array<int, string>  $patterns  extra regexes or literal terms to shield
      */
     public function preserving(array $patterns = []): self
@@ -119,18 +150,24 @@ final class PendingTranslation
         return $this->tap(['preserve' => true, 'patterns' => [...$this->options->patterns, ...$patterns]]);
     }
 
+    /**
+     * Send the text to the API exactly as it was given.
+     */
     public function withoutPreserving(): self
     {
         return $this->tap(['preserve' => false]);
     }
 
+    /**
+     * Translate without applying the configured glossary.
+     */
     public function withoutGlossary(): self
     {
         return $this->tap(['glossary' => false]);
     }
 
     /**
-     * Run after the response has been sent to the browser.
+     * Run the translation after the response has been sent to the browser.
      */
     public function deferred(bool $deferred = true): self
     {
@@ -138,6 +175,8 @@ final class PendingTranslation
     }
 
     /**
+     * Translate the given text, optionally passing the result through a callback.
+     *
      * @param  string|iterable<array-key, string>  $text
      * @param  (Closure(mixed): mixed)|null  $then
      * @return ($then is null ? Translation|TranslationCollection|Collection<string, Translation|TranslationCollection> : null)
@@ -158,7 +197,7 @@ final class PendingTranslation
     }
 
     /**
-     * The translated string only - the 1.x shorthand.
+     * Translate the given text and return the translated string only.
      */
     public function text(string $text): string
     {
@@ -170,6 +209,8 @@ final class PendingTranslation
     }
 
     /**
+     * Translate the given texts in a single batch.
+     *
      * @param  iterable<array-key, string>  $texts
      * @return TranslationCollection|Collection<string, TranslationCollection>
      */
@@ -181,7 +222,7 @@ final class PendingTranslation
     }
 
     /**
-     * Memory-safe streaming for very large sets. Single target only.
+     * Translate the given texts lazily, one chunk at a time, into a single target.
      *
      * @param  iterable<array-key, string>  $texts
      * @return LazyCollection<int, Translation>
@@ -207,7 +248,7 @@ final class PendingTranslation
     }
 
     /**
-     * Deep-translate selected leaves of a nested array or JSON string, keeping the structure.
+     * Translate the selected leaves of a nested array or JSON string, keeping its structure.
      *
      * @param  array<array-key, mixed>|string  $payload
      * @param  array<int, string>  $only  dot paths, wildcards allowed ("data.*.title")
@@ -244,6 +285,8 @@ final class PendingTranslation
     }
 
     /**
+     * Detect the language of the given text.
+     *
      * @param  string|iterable<array-key, string>  $text
      * @return DetectedLanguage|Collection<array-key, DetectedLanguage>
      */
@@ -258,7 +301,7 @@ final class PendingTranslation
     }
 
     /**
-     * Back-translation QA: translate out, translate back, score what survived.
+     * Translate the text out to a pivot language and back, then score what survived.
      */
     public function roundTrip(string $text, Language|string|null $via = null): RoundTripResult
     {
@@ -279,7 +322,7 @@ final class PendingTranslation
     }
 
     /**
-     * What this call would cost, without spending anything.
+     * Estimate what translating the given texts would cost.
      *
      * @param  string|iterable<array-key, string>  $texts
      */
@@ -299,13 +342,19 @@ final class PendingTranslation
         return $this->usage->estimate($segments, $targets, $cached);
     }
 
-    /** @return Collection<int, string> */
+    /**
+     * Get the target languages.
+     *
+     * @return Collection<int, string>
+     */
     public function targets(): Collection
     {
         return collect($this->options->targets);
     }
 
     /**
+     * Run the translation and shape the results for the caller.
+     *
      * @param  string|iterable<array-key, string>  $text
      * @return Translation|TranslationCollection|Collection<string, Translation|TranslationCollection>
      */
@@ -330,6 +379,8 @@ final class PendingTranslation
     }
 
     /**
+     * Get the segments of the given batch that are not cached yet.
+     *
      * @param  array<int, string>  $texts
      * @return array<int, string>
      */
@@ -339,7 +390,7 @@ final class PendingTranslation
     }
 
     /**
-     * Last-resort value when a driver returns nothing for a segment.
+     * Build the translation used when the driver returns nothing for a segment.
      */
     private function unchanged(string $text, string $target): Translation
     {
@@ -352,6 +403,9 @@ final class PendingTranslation
         );
     }
 
+    /**
+     * Run the given callback once the response has been sent, when that is possible.
+     */
     private function defer(Closure $callback): void
     {
         if (function_exists('defer') && ! app()->runningInConsole()) {
@@ -363,7 +417,11 @@ final class PendingTranslation
         $callback();
     }
 
-    /** @param array<string, mixed> $overrides */
+    /**
+     * Create a copy of the builder with the given options replaced.
+     *
+     * @param  array<string, mixed>  $overrides
+     */
     private function tap(array $overrides): self
     {
         $clone = new self($this->runner, $this->config, $this->usage, $this->options->with($overrides));

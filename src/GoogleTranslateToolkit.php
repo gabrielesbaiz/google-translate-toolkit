@@ -33,6 +33,9 @@ class GoogleTranslateToolkit
     use Conditionable;
     use Macroable;
 
+    /**
+     * Create a new toolkit instance.
+     */
     public function __construct(
         protected readonly TranslationRunner $runner,
         protected readonly Config $config,
@@ -41,12 +44,9 @@ class GoogleTranslateToolkit
         protected readonly Container $container,
     ) {}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Fluent entry points
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * Create a new pending translation configured with the defaults.
+     */
     public function query(): PendingTranslation
     {
         return new PendingTranslation($this->runner, $this->config, $this->usage, new TranslationOptions(
@@ -56,70 +56,101 @@ class GoogleTranslateToolkit
         ));
     }
 
+    /**
+     * Set the source language of a new pending translation.
+     */
     public function from(Language|string|null $language): PendingTranslation
     {
         return $this->query()->from($language);
     }
 
-    /** @param Language|string|iterable<int, Language|string> $language */
+    /**
+     * Set the target languages of a new pending translation.
+     *
+     * @param  Language|string|iterable<int, Language|string>  $language
+     */
     public function to(Language|string|iterable $language): PendingTranslation
     {
         return $this->query()->to($language);
     }
 
+    /**
+     * Set the text format of a new pending translation.
+     */
     public function format(TextFormat|string $format): PendingTranslation
     {
         return $this->query()->format($format);
     }
 
+    /**
+     * Translate as HTML, leaving the markup intact.
+     */
     public function asHtml(): PendingTranslation
     {
         return $this->query()->asHtml();
     }
 
+    /**
+     * Translate as plain text.
+     */
     public function asText(): PendingTranslation
     {
         return $this->query()->asText();
     }
 
+    /**
+     * Cache the translations, optionally for the given number of seconds.
+     */
     public function withCache(?int $ttl = null): PendingTranslation
     {
         return $this->query()->withCache($ttl);
     }
 
+    /**
+     * Bypass the translation cache.
+     */
     public function withoutCache(): PendingTranslation
     {
         return $this->query()->withoutCache();
     }
 
+    /**
+     * Return the untouched source text instead of throwing when the API fails.
+     */
     public function onFailUseSource(bool $fallback = true): PendingTranslation
     {
         return $this->query()->onFailUseSource($fallback);
     }
 
-    /** @param array<int, string> $patterns */
+    /**
+     * Shield the given patterns from translation, alongside the built-in ones.
+     *
+     * @param  array<int, string>  $patterns
+     */
     public function preserving(array $patterns = []): PendingTranslation
     {
         return $this->query()->preserving($patterns);
     }
 
+    /**
+     * Translate without applying the configured glossary.
+     */
     public function withoutGlossary(): PendingTranslation
     {
         return $this->query()->withoutGlossary();
     }
 
+    /**
+     * Run the translation after the response has been sent to the browser.
+     */
     public function deferred(bool $deferred = true): PendingTranslation
     {
         return $this->query()->deferred($deferred);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Translating
-    |--------------------------------------------------------------------------
-    */
-
     /**
+     * Translate the given text.
+     *
      * @param  string|iterable<array-key, string>  $text
      * @param  Language|string|iterable<int, Language|string>|null  $to
      * @return Translation|TranslationCollection|Collection<string, Translation|TranslationCollection>
@@ -134,7 +165,7 @@ class GoogleTranslateToolkit
     }
 
     /**
-     * The translated string, nothing else. Kept from 1.x.
+     * Translate the given text and return the translated string only.
      *
      * @param  Language|string|iterable<int, Language|string>|null  $to
      */
@@ -144,6 +175,8 @@ class GoogleTranslateToolkit
     }
 
     /**
+     * Translate the given texts in a single batch.
+     *
      * @param  iterable<array-key, string>  $texts
      * @param  Language|string|iterable<int, Language|string>|null  $to
      * @return TranslationCollection|Collection<string, TranslationCollection>
@@ -158,6 +191,8 @@ class GoogleTranslateToolkit
     }
 
     /**
+     * Translate the selected leaves of a nested array or JSON string.
+     *
      * @param  array<array-key, mixed>|string  $payload
      * @param  array<int, string>  $only
      * @param  array<int, string>  $except
@@ -175,6 +210,8 @@ class GoogleTranslateToolkit
     }
 
     /**
+     * Translate the given texts lazily, one chunk at a time.
+     *
      * @param  iterable<array-key, string>  $texts
      * @return LazyCollection<int, Translation>
      */
@@ -188,8 +225,9 @@ class GoogleTranslateToolkit
     }
 
     /**
-     * Translate only when the text is not already in the given language.
-     * Unlike 1.x this always returns a Translation, so the return type is stable.
+     * Translate the text unless it is already in the given language.
+     *
+     * A translation is always returned, even when nothing was sent to the API.
      */
     public function unlessLanguageIs(
         Language|string $languageCode,
@@ -217,18 +255,17 @@ class GoogleTranslateToolkit
         return $translation;
     }
 
+    /**
+     * Determine if the given text is already in the given language.
+     */
     public function isLanguage(string $text, Language|string $language): bool
     {
         return $this->detect($text)->is($language);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Detecting
-    |--------------------------------------------------------------------------
-    */
-
     /**
+     * Detect the language of the given text.
+     *
      * @param  string|iterable<array-key, string>  $text
      * @return DetectedLanguage|Collection<array-key, DetectedLanguage>
      */
@@ -238,6 +275,8 @@ class GoogleTranslateToolkit
     }
 
     /**
+     * Detect the language of the given input.
+     *
      * @param  string|iterable<array-key, string>  $input
      * @return DetectedLanguage|Collection<array-key, DetectedLanguage>
      */
@@ -247,6 +286,8 @@ class GoogleTranslateToolkit
     }
 
     /**
+     * Detect the language of each of the given inputs.
+     *
      * @param  iterable<array-key, string>  $input
      * @return Collection<array-key, DetectedLanguage>
      */
@@ -258,14 +299,8 @@ class GoogleTranslateToolkit
         return $detections;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Languages
-    |--------------------------------------------------------------------------
-    */
-
     /**
-     * Languages Google can translate, named in the given display language.
+     * Get the languages Google can translate, named in the given display language.
      *
      * @return Collection<string, string>
      */
@@ -275,7 +310,7 @@ class GoogleTranslateToolkit
     }
 
     /**
-     * The offline list baked into the package - no API call.
+     * Get the language list bundled with the package, without calling the API.
      *
      * @return Collection<string, string>
      */
@@ -285,6 +320,8 @@ class GoogleTranslateToolkit
     }
 
     /**
+     * Get the languages Google can translate, named in the given language.
+     *
      * @return Collection<string, string>
      */
     public function getAvailableTranslationsFor(Language|string $languageCode): Collection
@@ -292,6 +329,9 @@ class GoogleTranslateToolkit
         return $this->languages($languageCode);
     }
 
+    /**
+     * Normalize the given language code, validating it when strict mode is on.
+     */
     public function sanitizeLanguageCode(Language|string $languageCode): string
     {
         return $this->config->strictLanguages()
@@ -299,18 +339,17 @@ class GoogleTranslateToolkit
             : Language::normalize($languageCode);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Quality, cost and operations
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * Translate the text out to a pivot language and back, then score what survived.
+     */
     public function roundTrip(string $text, Language|string|null $via = null, Language|string|null $from = null): RoundTripResult
     {
         return $this->build($from, $via)->roundTrip($text, $via);
     }
 
     /**
+     * Estimate what translating the given texts would cost.
+     *
      * @param  string|iterable<array-key, string>  $texts
      * @param  array<int, string>  $targets
      */
@@ -319,12 +358,17 @@ class GoogleTranslateToolkit
         return $this->build(null, $targets === [] ? null : $targets)->estimate($texts);
     }
 
+    /**
+     * Get the usage recorder.
+     */
     public function usage(): Usage
     {
         return $this->usage;
     }
 
     /**
+     * Get the usage recorded over the last given number of days.
+     *
      * @return Collection<string, array<string, int|float>>
      */
     public function stats(int $days = 7): Collection
@@ -333,7 +377,7 @@ class GoogleTranslateToolkit
     }
 
     /**
-     * Pre-translate a set of strings so runtime requests are always cache hits.
+     * Queue a batch of jobs that pre-translate the given texts into the cache.
      *
      * @param  iterable<array-key, string>  $texts
      * @param  array<int, string>  $targets
@@ -362,20 +406,18 @@ class GoogleTranslateToolkit
         return $batch->dispatch();
     }
 
+    /**
+     * Flush every translation this package cached.
+     */
     public function flushCache(): int
     {
         return $this->cache->flush();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Blade
-    |--------------------------------------------------------------------------
-    */
-
     /**
-     * Backing call for the @translate directive. Target first, source second -
-     * the 1.x directive silently swapped these.
+     * Translate the text for the @translate directive, falling back to the source.
+     *
+     * The target language comes first here, the source second.
      */
     public function blade(string $text, Language|string|null $to = null, Language|string|null $from = null, TextFormat|string $format = TextFormat::Text): string
     {
@@ -383,20 +425,16 @@ class GoogleTranslateToolkit
     }
 
     /**
-     * Backing call for the @translateHtml directive: markup in, markup out, unescaped.
+     * Translate the markup for the @translateHtml directive, leaving it unescaped.
      */
     public function bladeHtml(string $text, Language|string|null $to = null, Language|string|null $from = null): string
     {
         return $this->blade($text, $to, $from, TextFormat::Html);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Testing
-    |--------------------------------------------------------------------------
-    */
-
     /**
+     * Replace the translator driver with a fake for the rest of the test.
+     *
      * @param  array<string, string|array<string, string>|Closure>  $stubs
      */
     public function fake(array $stubs = []): FakeTranslator
@@ -408,18 +446,17 @@ class GoogleTranslateToolkit
         return $fake;
     }
 
+    /**
+     * Resolve the translator driver.
+     */
     public function translator(): Translator
     {
         return $this->runner->translator();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Internals
-    |--------------------------------------------------------------------------
-    */
-
     /**
+     * Build a pending translation from the given overrides.
+     *
      * @param  Language|string|iterable<int, Language|string>|null  $to
      */
     protected function build(

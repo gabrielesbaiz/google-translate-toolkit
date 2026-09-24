@@ -6,6 +6,9 @@ namespace Gabrielesbaiz\GoogleTranslateToolkit\Exceptions;
 
 class BudgetExceededException extends GoogleTranslateException
 {
+    /**
+     * Create a new exception for a day that has run out of budget.
+     */
     public static function make(int $used, int $requested, int $budget): self
     {
         return new self(sprintf(

@@ -8,12 +8,15 @@ use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 
 /**
- * Back-translation QA: how much meaning survived the trip out and back.
+ * The result of translating a string out to a pivot language and back again.
  *
  * @implements Arrayable<string, mixed>
  */
 final readonly class RoundTripResult implements Arrayable, JsonSerializable
 {
+    /**
+     * Create a new round trip result instance.
+     */
     public function __construct(
         public string $source,
         public string $translated,
@@ -23,12 +26,19 @@ final readonly class RoundTripResult implements Arrayable, JsonSerializable
         public float $score,
     ) {}
 
+    /**
+     * Determine if too little meaning survived the round trip.
+     */
     public function isSuspicious(float $threshold = 0.6): bool
     {
         return $this->score < $threshold;
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * Get the instance as an array.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -41,7 +51,11 @@ final readonly class RoundTripResult implements Arrayable, JsonSerializable
         ];
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * Convert the object into something JSON serializable.
+     *
+     * @return array<string, mixed>
+     */
     public function jsonSerialize(): array
     {
         return $this->toArray();
