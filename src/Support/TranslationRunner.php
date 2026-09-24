@@ -270,7 +270,7 @@ final class TranslationRunner
 
         foreach ($targets as $target) {
             foreach ($payload as $key => $text) {
-                $results[$target][$key] = ['text' => $misses[$key], 'detectedSourceLanguage' => null];
+                $results[$target][$key] = ['text' => $misses[$key], 'detectedSourceLanguage' => null, 'fallback' => true];
             }
         }
 
@@ -306,7 +306,7 @@ final class TranslationRunner
                 continue;
             }
 
-            $result = $translated[$key] ?? ['text' => $text, 'detectedSourceLanguage' => null];
+            $result = $translated[$key] ?? ['text' => $text, 'detectedSourceLanguage' => null, 'fallback' => true];
 
             $final = $this->placeholders->restore((string) $result['text'], $masked[$key]->map ?? []);
 
@@ -314,7 +314,9 @@ final class TranslationRunner
                 $final = $this->glossary->apply($final, $target);
             }
 
-            if ($options->cache) {
+            // Text handed back by the fallback was never translated, so caching it
+            // would serve the source language until the entry expired.
+            if ($options->cache && ! ($result['fallback'] ?? false)) {
                 $this->cache->put($text, $final, $source, $target, $options->format, $options->cacheTtl);
             }
 
