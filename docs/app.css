@@ -160,6 +160,7 @@ h2.sec em{font-style:normal;color:var(--amber)}
 
 /* ---------- hero ---------- */
 .hero{padding-top:clamp(40px,7vh,76px);padding-bottom:clamp(40px,6vh,76px)}
+.hero .mark{display:block;width:min(30rem,78vw);height:auto;margin:0 0 1.7rem}
 .hero h1{
   font-weight:900;letter-spacing:-.04em;line-height:.94;
   font-size:clamp(44px,7.4vw,104px);margin:18px 0 0;max-width:14ch;text-wrap:balance;
